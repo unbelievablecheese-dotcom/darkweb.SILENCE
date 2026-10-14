@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Notebook and pencil</title>
+  <rect x="29" y="23" width="83" height="112" rx="9" fill="#e8f0fe" stroke="#34495e" stroke-width="4"/>
+  <path d="M48 49h46M48 66h46M48 83h35M48 100h42" fill="none" stroke="#6384a5" stroke-linecap="round" stroke-width="4"/>
+  <path d="M112 111l25-58 11 5-25 58-14 9z" fill="#f4b942" stroke="#34495e" stroke-linejoin="round" stroke-width="4"/>
+  <path d="M109 125l14-9-12-5z" fill="#f2d3ae" stroke="#34495e" stroke-linejoin="round" stroke-width="3"/>
+  <path d="M38 23v112" fill="none" stroke="#34495e" stroke-width="4"/>
+  <circle cx="38" cy="47" r="3" fill="#fff"/>
+  <circle cx="38" cy="70" r="3" fill="#fff"/>
+  <circle cx="38" cy="93" r="3" fill="#fff"/>
+  <circle cx="38" cy="116" r="3" fill="#fff"/>
+</svg>
