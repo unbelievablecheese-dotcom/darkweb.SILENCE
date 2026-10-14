@@ -28,6 +28,22 @@
   let recognition = null;
   let voiceRepliesEnabled = false;
 
+  function getAssistantVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const englishVoices = voices.filter((voice) =>
+      voice.lang.toLowerCase().startsWith("en")
+    );
+    const britishVoice = englishVoices
+      .filter((voice) => voice.lang.toLowerCase().startsWith("en-gb"))
+      .sort((first, second) => {
+        const preferredNames = /\b(daniel|james|ryan|arthur|male)\b/i;
+        return Number(preferredNames.test(second.name)) -
+          Number(preferredNames.test(first.name));
+      })[0];
+
+    return britishVoice || englishVoices[0] || voices[0] || null;
+  }
+
   function setStatus(message) {
     status.textContent = message;
   }
@@ -47,7 +63,14 @@
 
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(message);
-    utterance.lang = document.documentElement.lang || navigator.language || "en-US";
+    utterance.lang = "en-GB";
+    utterance.rate = 0.92;
+    utterance.pitch = 0.88;
+    const assistantVoice = getAssistantVoice();
+    if (assistantVoice) {
+      utterance.voice = assistantVoice;
+      utterance.lang = assistantVoice.lang;
+    }
     window.speechSynthesis.speak(utterance);
   }
 
