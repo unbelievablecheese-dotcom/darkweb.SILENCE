@@ -1,0 +1,222 @@
+.harvey {
+  --harvey-cyan: #71e6ff;
+  --harvey-panel: #101a2a;
+  --harvey-muted: #a9b9ca;
+  position: fixed;
+  z-index: 1050;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.harvey-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 1rem 0.6rem 0.6rem;
+  border: 1px solid rgba(113, 230, 255, 0.65);
+  border-radius: 999px;
+  background: #101a2a;
+  color: #fff;
+  box-shadow: 0 0 22px rgba(36, 189, 225, 0.25);
+  cursor: pointer;
+}
+
+.harvey-toggle:hover,
+.harvey-toggle:focus-visible {
+  background: #192a40;
+  box-shadow: 0 0 26px rgba(36, 189, 225, 0.45);
+}
+
+.harvey-orb {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid var(--harvey-cyan);
+  border-radius: 50%;
+  color: var(--harvey-cyan);
+  font-weight: 700;
+  box-shadow: inset 0 0 12px rgba(113, 230, 255, 0.2), 0 0 12px rgba(113, 230, 255, 0.35);
+}
+
+.harvey-toggle-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.harvey-panel {
+  position: absolute;
+  right: 0;
+  bottom: 4.1rem;
+  display: flex;
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: min(34rem, calc(100vh - 7rem));
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(113, 230, 255, 0.4);
+  border-radius: 1rem;
+  background: var(--harvey-panel);
+  color: #f4f8fc;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.4), 0 0 24px rgba(36, 189, 225, 0.16);
+}
+
+.harvey-panel[hidden] {
+  display: none;
+}
+
+.harvey-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem 1rem 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(120deg, #14263a, #101a2a);
+}
+
+.harvey-header h2 {
+  margin: 0;
+  color: var(--harvey-cyan);
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+}
+
+.harvey-eyebrow,
+.harvey-status {
+  margin: 0 0 0.25rem;
+  color: var(--harvey-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+.harvey-status {
+  margin: 0.35rem 0 0;
+  letter-spacing: 0;
+}
+
+.harvey-icon-button {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.harvey-messages {
+  display: flex;
+  min-height: 8rem;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.harvey-message {
+  max-width: 90%;
+  margin: 0;
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.85rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.harvey-message-assistant {
+  align-self: flex-start;
+  border: 1px solid rgba(113, 230, 255, 0.16);
+  background: #192a40;
+}
+
+.harvey-message-user {
+  align-self: flex-end;
+  background: #075b75;
+}
+
+.harvey-tools {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 0.8rem 0.7rem;
+}
+
+.harvey-tool-button {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #e7f3fa;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.harvey-tool-button:hover,
+.harvey-tool-button[aria-pressed="true"] {
+  border-color: var(--harvey-cyan);
+  color: var(--harvey-cyan);
+}
+
+.harvey-tool-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.harvey-form {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.harvey-form input {
+  min-width: 0;
+  flex: 1;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  outline: none;
+  background: #0a1220;
+  color: #fff;
+}
+
+.harvey-form input:focus {
+  border-color: var(--harvey-cyan);
+  box-shadow: 0 0 0 2px rgba(113, 230, 255, 0.18);
+}
+
+.harvey-form button {
+  width: 2.7rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: #087c9d;
+  color: #fff;
+  cursor: pointer;
+}
+
+.harvey-privacy {
+  margin: 0;
+  padding: 0 0.8rem 0.7rem;
+  color: var(--harvey-muted);
+  font-size: 0.68rem;
+}
+
+@media (max-width: 480px) {
+  .harvey {
+    right: 0.75rem;
+    bottom: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .harvey-orb {
+    animation: harvey-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes harvey-pulse {
+    50% {
+      box-shadow: inset 0 0 16px rgba(113, 230, 255, 0.35), 0 0 18px rgba(113, 230, 255, 0.55);
+    }
+  }
+}
