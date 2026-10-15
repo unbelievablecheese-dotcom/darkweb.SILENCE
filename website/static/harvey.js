@@ -80,6 +80,31 @@
     speak(message);
   }
 
+  async function askGemini(message) {
+    setStatus("Thinking…");
+
+    try {
+      const response = await fetch("/harvey-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+      if (!response.headers.get("Content-Type")?.includes("application/json")) {
+        throw new Error("Your session may have expired. Sign in again and retry.");
+      }
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "H.A.R.V.E.Y. could not get a response.");
+      }
+
+      reply(result.reply);
+    } catch (error) {
+      console.error("H.A.R.V.E.Y. chat request failed:", error);
+      reply(error.message || "I couldn’t reach the AI service. Please try again.");
+    }
+  }
+
   function normalizeCommand(command) {
     return command.trim().replace(/\s+/g, " ").toLowerCase();
   }
@@ -145,7 +170,7 @@
     reply(`I sent the request to delete note ${noteNumber}.`);
   }
 
-  function handleCommand(rawCommand) {
+  async function handleCommand(rawCommand) {
     const command = normalizeCommand(rawCommand);
     if (!command) {
       return;
@@ -208,7 +233,7 @@
       return;
     }
 
-    reply("I didn’t recognize that command. Say “help” to hear the commands I support.");
+    await askGemini(rawCommand.trim());
   }
 
   toggle.addEventListener("click", () => {
@@ -236,7 +261,18 @@
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    handleCommand(input.value);
+    const submitButton = form.querySelector('button[type="submit"]');
+    input.disabled = true;
+    if (submitButton) {
+      submitButton.disabled = true;
+    }
+    handleCommand(input.value).finally(() => {
+      input.disabled = false;
+      if (submitButton) {
+        submitButton.disabled = false;
+      }
+      input.focus();
+    });
   });
 
   voiceButton.addEventListener("click", () => {
