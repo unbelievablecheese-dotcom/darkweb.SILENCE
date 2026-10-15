@@ -3,75 +3,48 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#14283a" />
-    <title>{% block title %}Harvey Market{% endblock %}</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
+    <meta name="theme-color" content="#09090d" />
+    <title>{% block title %}SILENCE // SHHHH{% endblock %}</title>
+    <meta name="description" content="SILENCE esports — stay quiet. Make noise in-game." />
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='storefront.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='harvey.css') }}" />
   </head>
   <body id="top">
-    <header class="market-header">
-      <div class="market-header-main">
-        <a class="market-brand" href="{{ url_for('views.home') }}" aria-label="Harvey Market home">
-          <span class="brand-mark"><i class="fa fa-shopping-basket" aria-hidden="true"></i></span>
-          <span>harvey<span class="brand-accent">market</span></span>
-        </a>
-        <div class="delivery-note">
-          <i class="fa fa-map-marker" aria-hidden="true"></i>
-          <span><small>YOUR PERSONAL MARKET</small><strong>Explore something good</strong></span>
-        </div>
-        <form class="market-search" id="market-search" role="search">
-          <label class="sr-only" for="product-search">Search products</label>
-          <select id="search-category" aria-label="Choose a category">
-            <option value="all">All</option>
-            {% if categories is defined %}
-            {% for category in categories %}
-            <option value="{{ category|lower }}">{{ category }}</option>
-            {% endfor %}
-            {% endif %}
-          </select>
-          <input id="product-search" type="search" placeholder="Search Harvey Market" autocomplete="off" />
-          <button type="submit" aria-label="Search"><i class="fa fa-search" aria-hidden="true"></i></button>
-        </form>
-        <div class="market-account">
-          {% if user.is_authenticated %}
-          <span><small>Hello, {{ user.first_name }}</small><a href="{{ url_for('auth.logout') }}">Sign out</a></span>
-          {% else %}
-          <span><small>Welcome</small><span class="market-account-links"><a href="{{ url_for('auth.login') }}">Sign in</a><a class="market-create-account" href="{{ url_for('auth.sign_up') }}">Create account</a></span></span>
-          {% endif %}
-        </div>
-        <button class="market-cart" id="cart-toggle" type="button" aria-label="Open basket">
-          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-          <span>Basket</span><b id="cart-count" aria-live="polite">0</b>
-        </button>
-      </div>
-      <nav class="market-nav" aria-label="Main navigation">
-        <a href="#departments"><i class="fa fa-bars" aria-hidden="true"></i> Departments</a>
-        <a href="#featured-products">Featured</a>
-        <a href="#your-notes">Your notes</a>
-        <a href="#featured-video-heading">Community video</a>
-        <span>Thoughtful finds, all in one place</span>
+    <header class="silence-header">
+      <a class="silence-brand" href="{{ url_for('views.home') }}" aria-label="SILENCE home">
+        <img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" />
+        <span>SILENCE<span class="brand-slash">//</span><small>SHHHH</small></span>
+      </a>
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Open navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="silence-nav" id="main-nav" aria-label="Main navigation">
+        <a href="{{ url_for('views.home', _anchor='teams') }}">TEAMS</a>
+        <a href="{{ url_for('views.home', _anchor='merch') }}">MERCH</a>
+        <a href="{{ url_for('views.home', _anchor='content') }}">CONTENT</a>
+        <a href="{{ url_for('views.home', _anchor='community') }}">COMMUNITY</a>
+        {% if user.is_authenticated %}
+        <a href="{{ url_for('views.home', _anchor='your-notes') }}">YOUR NOTES</a>
+        <a href="{{ url_for('auth.logout') }}">SIGN OUT</a>
+        {% else %}
+        <a href="{{ url_for('auth.login') }}">SIGN IN</a>
+        {% endif %}
       </nav>
     </header>
 
-    <main class="market-main">
+    <main>
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-      <div class="market-alerts">
+      <div class="site-alerts" role="status">
         {% for category, message in messages %}
-        <div class="alert {{ 'alert-danger' if category == 'error' else 'alert-success' }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Dismiss">&times;</button>
+        <div class="site-alert {{ 'site-alert-error' if category == 'error' else 'site-alert-success' }}">
+          <span>{{ message }}</span>
+          <button type="button" class="alert-dismiss" aria-label="Dismiss message">&times;</button>
         </div>
         {% endfor %}
       </div>
@@ -80,31 +53,17 @@
       {% block content %}{% endblock %}
     </main>
 
-    <div class="cart-backdrop" id="cart-backdrop" hidden></div>
-    <aside class="cart-drawer" id="cart-drawer" aria-labelledby="cart-title" aria-hidden="true">
-      <div class="cart-drawer-header">
-        <div><small>YOUR PICKS</small><h2 id="cart-title">Shopping basket</h2></div>
-        <button type="button" id="cart-close" class="cart-close" aria-label="Close basket">&times;</button>
-      </div>
-      <div id="cart-items" class="cart-items"></div>
-      <div class="cart-drawer-footer">
-        <p class="cart-total">Subtotal <strong id="cart-subtotal">$0.00</strong></p>
-        <p class="cart-demo-note">Demo basket only — checkout and payments are not enabled.</p>
-        <button type="button" id="cart-clear" class="cart-clear">Clear basket</button>
-      </div>
-    </aside>
-
     <section class="harvey" aria-label="H. A. R. V. E. Y. assistant">
       <button id="harvey-toggle" class="harvey-toggle" type="button" aria-expanded="false" aria-controls="harvey-panel" aria-label="Open H. A. R. V. E. Y. assistant">
         <span class="harvey-orb" aria-hidden="true">H</span><span class="harvey-toggle-label">H.A.R.V.E.Y.</span>
       </button>
       <div id="harvey-panel" class="harvey-panel" hidden>
         <header class="harvey-header">
-          <div><p class="harvey-eyebrow">PERSONAL WEB ASSISTANT</p><h2>H. A. R. V. E. Y.</h2><p class="harvey-status" id="harvey-status">Ready when you are</p></div>
+          <div><p class="harvey-eyebrow">SILENCE // AI SYSTEM</p><h2>H. A. R. V. E. Y.</h2><p class="harvey-status" id="harvey-status">Online and ready</p></div>
           <button id="harvey-close" class="harvey-icon-button" type="button" aria-label="Close assistant" title="Close">&times;</button>
         </header>
         <div id="harvey-messages" class="harvey-messages" role="log" aria-live="polite" aria-relevant="additions">
-          <p class="harvey-message harvey-message-assistant">Good day. I can help with your notes, the market, or general questions. Say “help” to begin.</p>
+          <p class="harvey-message harvey-message-assistant">Welcome to SILENCE. I’m H.A.R.V.E.Y. Ask about the teams, save a note, or ask me anything.</p>
         </div>
         <div class="harvey-tools">
           <button id="harvey-mic" class="harvey-tool-button" type="button"><i class="fa fa-microphone" aria-hidden="true"></i><span>Speak</span></button>
@@ -112,21 +71,20 @@
         </div>
         <form id="harvey-form" class="harvey-form">
           <label class="sr-only" for="harvey-input">Message H.A.R.V.E.Y.</label>
-          <input id="harvey-input" type="text" autocomplete="off" maxlength="500" placeholder="How may I help?" required />
+          <input id="harvey-input" type="text" autocomplete="off" maxlength="500" placeholder="Type a message..." required />
           <button type="submit" aria-label="Send message" title="Send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
         </form>
-        <p class="harvey-privacy">General messages go to Google Gemini. Avoid sharing sensitive information.</p>
+        <p class="harvey-privacy">AI replies need the SILENCE Gemini service. Don’t share passwords or private keys.</p>
       </div>
     </section>
 
-    <footer class="market-footer">
-      <span>Harvey Market</span><span>A little inspiration for everyday life.</span><a href="#top">Back to top ↑</a>
+    <footer class="silence-footer">
+      <a class="footer-brand" href="#top">SILENCE <span>// SHHHH</span></a>
+      <p>STAY QUIET. MAKE NOISE IN-GAME.</p>
+      <a href="#top" class="back-to-top">BACK TO TOP ↑</a>
     </footer>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    {% block javascript %}<script src="{{ url_for('static', filename='index.js') }}"></script>{% endblock %}
-    <script src="{{ url_for('static', filename='storefront.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script src="{{ url_for('static', filename='silence.js') }}" defer></script>
     <script src="{{ url_for('static', filename='harvey.js') }}" defer></script>
   </body>
 </html>

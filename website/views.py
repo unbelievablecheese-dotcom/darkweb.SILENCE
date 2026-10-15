@@ -11,110 +11,48 @@ from .models import Note
 
 views = Blueprint('views', __name__)
 
-PRODUCTS = [
+TEAMS = [
     {
-        "id": "desk-lamp",
-        "name": "Arc LED Desk Lamp",
-        "category": "Home",
-        "price": 34.99,
-        "rating": 4.8,
-        "reviews": 128,
-        "icon": "💡",
-        "color": "gold",
-        "description": "Warm, adjustable light for focused evenings.",
-        "badge": "Bestseller",
+        "tag": "01 / SILENCE",
+        "name": "SILENCE",
+        "discipline": "VALORANT // MAIN ROSTER",
+        "description": "The starting five. Quiet focus, fearless plays, one round at a time.",
+        "mark": "S",
+        "color": "pink",
     },
     {
-        "id": "wireless-headphones",
-        "name": "Studio Wireless Headphones",
-        "category": "Electronics",
-        "price": 79.00,
-        "rating": 4.7,
-        "reviews": 86,
-        "icon": "🎧",
-        "color": "blue",
-        "description": "Comfortable sound for work, play, and travel.",
-        "badge": "Popular pick",
+        "tag": "02 / SHHHH",
+        "name": "SHHHH",
+        "discipline": "VALORANT // ACADEMY",
+        "description": "The next generation, sharpening their game and earning their place.",
+        "mark": "H",
+        "color": "orange",
     },
     {
-        "id": "everyday-bottle",
-        "name": "Insulated Everyday Bottle",
-        "category": "Outdoors",
-        "price": 22.50,
-        "rating": 4.6,
-        "reviews": 214,
-        "icon": "🧴",
-        "color": "mint",
-        "description": "A sturdy, reusable companion for busy days.",
-        "badge": "",
+        "tag": "03 / SILENCE",
+        "name": "SILENCE GC",
+        "discipline": "VALORANT // GAME CHANGERS",
+        "description": "A roster built on skill, teamwork, and making room for the next voice.",
+        "mark": "GC",
+        "color": "violet",
     },
     {
-        "id": "canvas-tote",
-        "name": "Market Canvas Tote",
-        "category": "Fashion",
-        "price": 18.00,
-        "rating": 4.5,
-        "reviews": 63,
-        "icon": "👜",
-        "color": "rose",
-        "description": "A roomy carry-all made for everyday errands.",
-        "badge": "",
-    },
-    {
-        "id": "desk-organizer",
-        "name": "Bamboo Desk Organizer",
-        "category": "Home",
-        "price": 27.95,
-        "rating": 4.8,
-        "reviews": 91,
-        "icon": "🗂️",
-        "color": "sand",
-        "description": "Keep your workspace tidy and essentials close.",
-        "badge": "Staff pick",
-    },
-    {
-        "id": "plant-kit",
-        "name": "Little Windowsill Garden Kit",
-        "category": "Outdoors",
-        "price": 24.00,
-        "rating": 4.4,
-        "reviews": 47,
-        "icon": "🪴",
-        "color": "mint",
-        "description": "An easy-start kit for a greener corner at home.",
-        "badge": "",
-    },
-    {
-        "id": "notebook-set",
-        "name": "Everyday Notebook Set",
-        "category": "Stationery",
-        "price": 14.25,
-        "rating": 4.9,
-        "reviews": 173,
-        "icon": "📓",
-        "color": "lilac",
-        "description": "Three smooth-paper notebooks for plans and ideas.",
-        "badge": "Top rated",
-    },
-    {
-        "id": "wireless-charger",
-        "name": "Compact Wireless Charger",
-        "category": "Electronics",
-        "price": 29.99,
-        "rating": 4.3,
-        "reviews": 58,
-        "icon": "🔋",
-        "color": "blue",
-        "description": "A clean, cable-light spot for compatible devices.",
-        "badge": "",
+        "tag": "04 / SHHHH",
+        "name": "SHHHH RISING",
+        "discipline": "COMMUNITY // DEVELOPMENT",
+        "description": "A place to learn, compete, and grow alongside the SILENCE community.",
+        "mark": "R",
+        "color": "cyan",
     },
 ]
 
-
 @views.route('/', methods=['GET', 'POST'])
-@login_required
 def home():
     if request.method == 'POST':
+        if not current_user.is_authenticated:
+            flash('Sign in to save a private note.', category='error')
+            return redirect(url_for('auth.login', next=url_for('views.home', _anchor='your-notes')))
+
         note = request.form.get('note', '').strip()
 
         if not note:
@@ -131,8 +69,7 @@ def home():
     return render_template(
         'home.html',
         user=current_user,
-        products=PRODUCTS,
-        categories=sorted({product["category"] for product in PRODUCTS}),
+        teams=TEAMS,
     )
 
 
@@ -167,8 +104,8 @@ def harvey_chat():
         return jsonify(error='H.A.R.V.E.Y. AI is not configured yet.'), 503
 
     prompt = (
-        'You are H.A.R.V.E.Y., a polite, concise assistant on a personal notes website. '
-        'Answer the user conversationally and help with general questions. '
+        'You are H.A.R.V.E.Y., a polite, concise assistant on SILENCE, an esports community website. '
+        'Help with general questions, gaming and esports topics, and the user’s private notes. '
         'You cannot access or modify website files, accounts, or deployments, so never '
         'claim that you have performed those actions. Do not request or reveal secrets. '
         f'\n\nUser message:\n{message.strip()}'

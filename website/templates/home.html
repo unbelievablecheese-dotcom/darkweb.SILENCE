@@ -1,137 +1,149 @@
 {% extends "base.html" %}
-{% block title %}Harvey Market | Discover everyday favorites{% endblock %}
+{% block title %}SILENCE // SHHHH — Esports{% endblock %}
 {% block content %}
-<section class="welcome-strip">
-  <span><i class="fa fa-sparkles" aria-hidden="true"></i> A fresh place to discover everyday favorites</span>
-  <span>Browse the demo market, save a note, and ask H.A.R.V.E.Y. for help.</span>
+<section class="silence-hero" aria-labelledby="hero-title">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+  <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+  <div class="hero-content">
+    <p class="hero-kicker"><span></span> EST. MMXXVI <b>/</b> BUILT TO COMPETE</p>
+    <h1 id="hero-title">SILENCE</h1>
+    <p class="hero-tagline">STAY QUIET.<br /><span>MAKE NOISE IN-GAME.</span></p>
+    <p class="hero-description">A new kind of esports collective. Built for competition, made for the community, and always chasing the next level.</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="#teams">MEET THE TEAMS <span aria-hidden="true">↗</span></a>
+      <a class="button button-ghost" href="#community">JOIN THE COMMUNITY <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="hero-status"><span class="status-dot"></span> QUIETLY BUILDING. LOUDLY COMPETING.</div>
+  </div>
+  <div class="hero-emblem" aria-label="SILENCE team emblem">
+    <div class="emblem-ring"></div>
+    <img src="{{ url_for('static', filename='silence-logo.png') }}" alt="SILENCE shushing emblem" />
+    <span class="emblem-caption">S / H</span>
+  </div>
+  <a class="scroll-cue" href="#teams"><span></span> SCROLL TO EXPLORE</a>
+  <div class="hero-index">01 <i>/</i> 04</div>
 </section>
 
-<section class="market-hero" aria-labelledby="hero-heading">
-  <div class="hero-copy">
-    <p class="eyebrow">A MARKET MADE FOR GOOD FINDS</p>
-    <h1 id="hero-heading">Little things.<br /><span>Better days.</span></h1>
-    <p>Explore useful, thoughtful picks for your desk, your home, and everywhere in between.</p>
-    <a class="hero-button" href="#featured-products">Explore featured finds <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
-    <div class="hero-assurance"><i class="fa fa-heart-o" aria-hidden="true"></i> A friendly demo shop — no checkout or payments</div>
-  </div>
-  <div class="hero-art" aria-hidden="true">
-    <div class="hero-sun"></div>
-    <div class="hero-art-card hero-art-card-back">☕</div>
-    <div class="hero-art-card hero-art-card-front">🪴</div>
-    <div class="hero-art-caption"><span>CURATED FOR YOU</span><strong>Find your next favorite</strong></div>
-    <div class="hero-sparkle">✳</div>
-  </div>
-</section>
-
-<section id="departments" class="department-section" aria-labelledby="departments-heading">
+<section id="teams" class="content-section teams-section" aria-labelledby="teams-heading">
+  <div class="section-topline"><span>01 / ROSTERS</span><span>SILENCE // SHHHH</span></div>
   <div class="section-heading">
-    <div><p class="eyebrow">BROWSE YOUR WAY</p><h2 id="departments-heading">Explore departments</h2></div>
-    <span>Good ideas start here</span>
+    <div><p class="section-kicker">THE PEOPLE BEHIND THE QUIET</p><h2 id="teams-heading">OUR <span>TEAMS</span></h2></div>
+    <p class="section-aside">Four paths. One standard.<br />Every round is earned.</p>
   </div>
-  <div class="department-list">
-    {% for category in categories %}
-    <button class="department-chip" type="button" data-category="{{ category|lower }}">
-      <span class="department-icon">
-        {% if category == "Electronics" %}⌁{% elif category == "Fashion" %}◇{% elif category == "Home" %}⌂{% elif category == "Outdoors" %}♧{% else %}✎{% endif %}
-      </span>
-      <span>{{ category }}</span><i class="fa fa-angle-right" aria-hidden="true"></i>
-    </button>
-    {% endfor %}
-  </div>
-</section>
-
-<section id="featured-products" class="products-section" aria-labelledby="products-heading">
-  <div class="section-heading product-heading">
-    <div><p class="eyebrow">A FEW THINGS WE LOVE</p><h2 id="products-heading">Featured finds</h2></div>
-    <span id="product-result-count">{{ products|length }} hand-picked favorites</span>
-  </div>
-  <div class="product-grid" id="product-grid">
-    {% for product in products %}
-    {% set product_price = "%.2f"|format(product.price) %}
-    <article class="product-card"
-      data-product-id="{{ product.id }}"
-      data-name="{{ product.name|lower }}"
-      data-category="{{ product.category|lower }}"
-      data-price="{{ product_price }}">
-      <div class="product-art product-art-{{ product.color }}">
-        {% if product.badge %}<span class="product-badge">{{ product.badge }}</span>{% endif %}
-        <span class="product-emoji" aria-hidden="true">{{ product.icon }}</span>
-        <span class="product-art-word">{{ product.category }}</span>
+  <div class="team-grid">
+    {% for team in teams %}
+    <article class="team-card team-{{ team.color }}">
+      <div class="team-card-top"><span>{{ team.tag }}</span><span class="team-live"><i></i> PROGRAM</span></div>
+      <div class="team-card-mark">
+        <img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" />
+        <span>{{ team.mark }}</span>
       </div>
-      <div class="product-info">
-        <p class="product-category">{{ product.category }}</p>
-        <h3>{{ product.name }}</h3>
-        <p class="product-description">{{ product.description }}</p>
-        <div class="product-rating" aria-label="{{ product.rating }} out of 5 stars">
-          <span aria-hidden="true">{% for _ in range(5) %}{{ "★" if loop.index <= product.rating|int else "☆" }}{% endfor %}</span>
-          <small>{{ product.rating }} ({{ product.reviews }})</small>
-        </div>
-        <div class="product-purchase">
-          <strong>${{ "%.2f"|format(product.price) }}</strong>
-          <button type="button" class="add-to-cart" data-product-id="{{ product.id }}">
-            <i class="fa fa-plus" aria-hidden="true"></i><span>Add</span>
-          </button>
-        </div>
-      </div>
+      <p class="team-discipline">{{ team.discipline }}</p>
+      <h3>{{ team.name }}</h3>
+      <p class="team-description">{{ team.description }}</p>
+      <a href="#community" class="team-link">EXPLORE THE TEAM <span aria-hidden="true">↗</span></a>
     </article>
     {% endfor %}
-    <div class="no-products" id="no-products" hidden>
-      <span aria-hidden="true">⌕</span><h3>No finds just yet</h3><p>Try another search or browse all departments.</p>
-      <button type="button" id="clear-search">Show all products</button>
+  </div>
+  <div class="roster-footnote"><span>4</span> ACTIVE PROJECTS <i></i> BUILT FOR THE NEXT ROUND</div>
+</section>
+
+<section id="merch" class="content-section merch-section" aria-labelledby="merch-heading">
+  <div class="section-topline"><span>02 / SILENCE SUPPLY</span><span>CONCEPT MERCH</span></div>
+  <div class="section-heading">
+    <div><p class="section-kicker">REP THE QUIET</p><h2 id="merch-heading">SILENCE <span>MERCH</span></h2></div>
+    <p class="section-aside">The look. The mark.<br />Made for the community.</p>
+  </div>
+  <div class="merch-grid">
+    <article class="merch-card">
+      <div class="merch-art merch-tee" role="img" aria-label="Black SILENCE logo T-shirt concept">
+        <span class="merch-edition">SHHHH / 001</span><div class="garment garment-shirt"><img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" /></div>
+        <span class="merch-art-label">SILENCE CORE</span>
+      </div>
+      <div class="merch-details"><div><p>CORE COLLECTION</p><h3>SILENCE Logo Tee</h3></div><span>CONCEPT</span></div>
+    </article>
+    <article class="merch-card">
+      <div class="merch-art merch-hoodie" role="img" aria-label="Black SHHHH hoodie concept">
+        <span class="merch-edition">SHHHH / 002</span><div class="garment garment-hoodie"><span class="hood"></span><img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" /></div>
+        <span class="merch-art-label">KEEP IT QUIET</span>
+      </div>
+      <div class="merch-details"><div><p>AFTER HOURS</p><h3>SHHHH Heavy Hoodie</h3></div><span>CONCEPT</span></div>
+    </article>
+    <article class="merch-card">
+      <div class="merch-art merch-cap" role="img" aria-label="Black SILENCE cap concept">
+        <span class="merch-edition">SHHHH / 003</span><div class="garment garment-cap"><img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" /></div>
+        <span class="merch-art-label">LOW PROFILE</span>
+      </div>
+      <div class="merch-details"><div><p>DAILY UNIFORM</p><h3>SILENCE Snapback</h3></div><span>CONCEPT</span></div>
+    </article>
+  </div>
+  <p class="merch-disclaimer">EARLY DESIGN CONCEPTS — NOT AVAILABLE FOR PURCHASE. MERCH MOCKUPS USE THE SUPPLIED SILENCE LOGO.</p>
+</section>
+
+<section id="content" class="content-section content-feature" aria-labelledby="content-heading">
+  <div class="section-topline"><span>03 / SIGNAL</span><span>FROM THE COMMUNITY</span></div>
+  <div class="feature-layout">
+    <div class="feature-copy">
+      <p class="section-kicker">WATCH THE MOMENT</p>
+      <h2 id="content-heading">LET THE<br /><span>GAME TALK.</span></h2>
+      <p>Highlights, close calls, and the plays worth watching again. Pull up a seat and catch the latest community clip.</p>
+      <a class="button button-primary" href="https://medal.tv/games/valorant/clips/nbrmH0AULqK4_27NI?invite=cr-MSx5S0csNDQ4MDYyODQ3" target="_blank" rel="noopener noreferrer">WATCH THE FEATURE <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="feature-video">
+      <div class="video-label"><span>SHHHH // COMMUNITY CLIP</span><i></i> PLAYING IN THE FEED</div>
+      <iframe
+        src="https://medal.tv/games/valorant/clip/nbrmH0AULqK4_27NI"
+        title="SILENCE community Valorant clip on Medal"
+        allow="autoplay; fullscreen"
+        allowfullscreen
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
     </div>
   </div>
 </section>
 
-<section id="your-notes" class="notes-section" aria-labelledby="notes-heading">
-  <div class="notes-intro">
-    <div class="notes-illustration-wrap">
-      <img src="{{ url_for('static', filename='notes-illustration.svg') }}" alt="" class="notes-illustration" />
-    </div>
-    <div>
-      <p class="eyebrow">A LITTLE SPACE FOR YOURSELF</p>
-      <h2 id="notes-heading">Your notes, all in one place.</h2>
-      <p>Keep a reminder or save a passing thought. Your notes are private to your account.</p>
-    </div>
+<section id="community" class="community-section">
+  <div class="community-mark"><img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" /></div>
+  <div class="community-copy">
+    <p class="section-kicker">04 / THE SILENCE COMMUNITY</p>
+    <h2>FIND YOUR <span>PEOPLE.</span></h2>
+    <p>Players, creators, and fans — the next chapter starts with you.</p>
+  </div>
+  <a class="button button-light" href="#teams">EXPLORE THE TEAMS <span aria-hidden="true">↗</span></a>
+</section>
+
+<section id="your-notes" class="notes-area">
+{% if user.is_authenticated %}
+<div class="content-section notes-section" aria-labelledby="notes-heading">
+  <div class="section-topline"><span>PRIVATE / YOUR SPACE</span><span>SHHHH</span></div>
+  <div class="section-heading">
+    <div><p class="section-kicker">SAVE IT FOR LATER</p><h2 id="notes-heading">YOUR <span>NOTES</span></h2></div>
+    <p class="section-aside">Private to your account.<br />Only you can see these.</p>
   </div>
   <div class="notes-workspace">
     <form method="POST" class="note-form">
-      <label for="note">What would you like to remember?</label>
-      <textarea name="note" id="note" class="form-control" maxlength="10000" placeholder="Write a reminder, idea, or note..." required></textarea>
-      <div class="note-form-footer"><small>Up to 10,000 characters</small><button type="submit" class="note-submit"><i class="fa fa-plus" aria-hidden="true"></i> Save note</button></div>
+      <label for="note">WHAT DO YOU WANT TO REMEMBER?</label>
+      <textarea name="note" id="note" maxlength="10000" placeholder="Write a reminder, idea, or note..." required></textarea>
+      <div class="note-form-footer"><small>UP TO 10,000 CHARACTERS</small><button type="submit" class="button button-primary">SAVE NOTE <span aria-hidden="true">+</span></button></div>
     </form>
     <div class="saved-notes">
-      <div class="saved-notes-heading"><h3>Saved notes</h3><span>{{ user.notes|length }}</span></div>
-      <div class="empty-notes" {% if user.notes %}hidden{% endif %}>
-        <span aria-hidden="true">✎</span><p>No notes saved yet. Add one above to get started.</p>
-      </div>
+      <div class="saved-notes-heading"><h3>SAVED NOTES</h3><span>{{ user.notes|length }}</span></div>
+      <div class="empty-notes" {% if user.notes %}hidden{% endif %}><span aria-hidden="true">///</span><p>Nothing here yet. Save your first note.</p></div>
       <ul id="notes">
         {% for note in user.notes %}
-        <li>
-          <span class="note-pin" aria-hidden="true">✦</span><span class="note-text">{{ note.data }}</span>
-          <button type="button" class="delete-note" data-note-id="{{ note.id }}" aria-label="Delete note" title="Delete note"><i class="fa fa-trash" aria-hidden="true"></i></button>
-        </li>
+        <li><span class="note-index">/ {{ "%02d"|format(loop.index) }}</span><span class="note-text">{{ note.data }}</span><button type="button" class="delete-note" data-note-id="{{ note.id }}" aria-label="Delete note" title="Delete note">×</button></li>
         {% endfor %}
       </ul>
     </div>
   </div>
-</section>
-
-<section class="community-section" aria-labelledby="featured-video-heading">
-  <div class="community-copy">
-    <p class="eyebrow">FROM OUR COMMUNITY</p>
-    <h2 id="featured-video-heading">A little inspiration between finds.</h2>
-    <p>Take a break and watch a featured clip from the community.</p>
-    <a href="https://medal.tv/games/valorant/clips/nbrmH0AULqK4_27NI?invite=cr-MSx5S0csNDQ4MDYyODQ3" target="_blank" rel="noopener noreferrer">Watch on Medal <i class="fa fa-external-link" aria-hidden="true"></i></a>
-  </div>
-  <div class="community-video">
-    <iframe
-      src="https://medal.tv/games/valorant/clip/nbrmH0AULqK4_27NI"
-      title="Featured Valorant video on Medal"
-      allow="autoplay; fullscreen"
-      allowfullscreen
-      loading="lazy"
-      referrerpolicy="strict-origin-when-cross-origin"
-    ></iframe>
-  </div>
+</div>
+{% else %}
+<div class="notes-gate">
+  <span>SHHHH / PRIVATE SPACE</span><p>Sign in to keep personal notes with SILENCE.</p>
+  <a href="{{ url_for('auth.login', next=url_for('views.home', _anchor='your-notes')) }}">SIGN IN TO YOUR NOTES ↗</a>
+</div>
+{% endif %}
 </section>
 {% endblock %}

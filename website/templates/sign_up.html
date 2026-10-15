@@ -1,54 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Create account | Harvey Market{% endblock %}
+{% block title %}JOIN // SILENCE{% endblock %}
 {% block content %}
 <section class="auth-card">
-  <p class="eyebrow">MAKE YOURSELF AT HOME</p>
-  <h1>Create your account</h1>
-  <p class="auth-description">Save your notes and make this little market your own.</p>
+  <p class="section-kicker">SILENCE // NEW MEMBER</p>
+  <h1>JOIN THE QUIET.</h1>
+  <p class="auth-description">Create an account for SILENCE and keep your notes private.</p>
   <form method="POST" class="auth-form">
-  <div class="form-group">
-    <label for="email">Email Address</label>
-    <input
-      type="email"
-      class="form-control"
-      id="email"
-      name="email"
-      placeholder="Enter email"
-    />
-  </div>
-  <div class="form-group">
-    <label for="firstName">First Name</label>
-    <input
-      type="text"
-      class="form-control"
-      id="firstName"
-      name="firstName"
-      placeholder="Enter first name"
-    />
-  </div>
-  <div class="form-group">
-    <label for="password1">Password</label>
-    <input
-      type="password"
-      class="form-control"
-      id="password1"
-      name="password1"
-      placeholder="Enter password"
-    />
-  </div>
-  <div class="form-group">
-    <label for="password2">Password (Confirm)</label>
-    <input
-      type="password"
-      class="form-control"
-      id="password2"
-      name="password2"
-      placeholder="Confirm password"
-    />
-  </div>
-  <br />
-  <button type="submit" class="auth-submit">Create account</button>
+    <div class="form-group">
+      <label for="email">EMAIL ADDRESS</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" autocomplete="email" required />
+    </div>
+    <div class="form-group">
+      <label for="firstName">GAMER NAME</label>
+      <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter your name" autocomplete="given-name" required />
+    </div>
+    <div class="form-group">
+      <label for="password1">PASSWORD</label>
+      <input type="password" class="form-control" id="password1" name="password1" placeholder="At least 7 characters" autocomplete="new-password" minlength="7" required />
+    </div>
+    <div class="form-group">
+      <label for="password2">CONFIRM PASSWORD</label>
+      <input type="password" class="form-control" id="password2" name="password2" placeholder="Enter your password again" autocomplete="new-password" minlength="7" required />
+    </div>
+    <button type="submit" class="auth-submit">CREATE SILENCE ACCOUNT</button>
   </form>
-  <p class="auth-switch">Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+  <p class="auth-switch">ALREADY WITH SILENCE? <a href="{{ url_for('auth.login') }}">SIGN IN</a></p>
 </section>
 {% endblock %}

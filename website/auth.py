@@ -1,3 +1,5 @@
+from urllib.parse import urlsplit
+
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -18,6 +20,17 @@ def login():
         if user and check_password_hash(user.password, password):
             flash('Logged in successfully!', category='success')
             login_user(user, remember=True)
+            next_url = request.args.get('next')
+            parsed_next_url = urlsplit(next_url or '')
+            if (
+                next_url
+                and parsed_next_url.path.startswith('/')
+                and not parsed_next_url.path.startswith('//')
+                and not parsed_next_url.netloc
+                and not parsed_next_url.scheme
+                and '\\' not in parsed_next_url.path
+            ):
+                return redirect(next_url)
             return redirect(url_for('views.home'))
         else:
             flash('Invalid email or password.', category='error')

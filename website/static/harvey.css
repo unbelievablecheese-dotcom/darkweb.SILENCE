@@ -1,7 +1,7 @@
 .harvey {
-  --harvey-cyan: #71e6ff;
-  --harvey-panel: #101a2a;
-  --harvey-muted: #a9b9ca;
+  --harvey-cyan: #ff5573;
+  --harvey-panel: #111116;
+  --harvey-muted: #aaa7ae;
   position: fixed;
   z-index: 1050;
   right: 1.25rem;
@@ -14,18 +14,18 @@
   align-items: center;
   gap: 0.7rem;
   padding: 0.6rem 1rem 0.6rem 0.6rem;
-  border: 1px solid rgba(113, 230, 255, 0.65);
+  border: 1px solid rgba(255, 85, 115, 0.65);
   border-radius: 999px;
-  background: #101a2a;
+  background: #111116;
   color: #fff;
-  box-shadow: 0 0 22px rgba(36, 189, 225, 0.25);
+  box-shadow: 0 0 22px rgba(255, 54, 94, 0.22);
   cursor: pointer;
 }
 
 .harvey-toggle:hover,
 .harvey-toggle:focus-visible {
-  background: #192a40;
-  box-shadow: 0 0 26px rgba(36, 189, 225, 0.45);
+  background: #211319;
+  box-shadow: 0 0 26px rgba(255, 54, 94, 0.4);
 }
 
 .harvey-orb {
@@ -37,7 +37,7 @@
   border-radius: 50%;
   color: var(--harvey-cyan);
   font-weight: 700;
-  box-shadow: inset 0 0 12px rgba(113, 230, 255, 0.2), 0 0 12px rgba(113, 230, 255, 0.35);
+  box-shadow: inset 0 0 12px rgba(255, 85, 115, 0.2), 0 0 12px rgba(255, 85, 115, 0.35);
 }
 
 .harvey-toggle-label {
@@ -55,11 +55,11 @@
   max-height: min(34rem, calc(100vh - 7rem));
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(113, 230, 255, 0.4);
+  border: 1px solid rgba(255, 85, 115, 0.4);
   border-radius: 1rem;
   background: var(--harvey-panel);
   color: #f4f8fc;
-  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.4), 0 0 24px rgba(36, 189, 225, 0.16);
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.4), 0 0 24px rgba(255, 54, 94, 0.14);
 }
 
 .harvey-panel[hidden] {
@@ -72,7 +72,7 @@
   justify-content: space-between;
   padding: 1rem 1rem 0.8rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(120deg, #14263a, #101a2a);
+  background: linear-gradient(120deg, #211319, #111116);
 }
 
 .harvey-header h2 {
@@ -127,19 +127,19 @@
 
 .harvey-message-assistant {
   align-self: flex-start;
-  border: 1px solid rgba(113, 230, 255, 0.16);
-  background: #192a40;
+  border: 1px solid rgba(255, 85, 115, 0.16);
+  background: #23181d;
 }
 
 .harvey-message-user {
   align-self: flex-end;
-  background: #075b75;
+  background: #79283a;
 }
 
 .harvey-sign-in {
   align-self: flex-start;
   padding: 0.5rem 0.75rem;
-  border: 1px solid rgba(113, 230, 255, 0.45);
+  border: 1px solid rgba(255, 85, 115, 0.45);
   border-radius: 0.55rem;
   color: var(--harvey-cyan);
   font-size: 0.82rem;
@@ -149,7 +149,7 @@
 
 .harvey-sign-in:hover,
 .harvey-sign-in:focus-visible {
-  background: rgba(113, 230, 255, 0.1);
+  background: rgba(255, 85, 115, 0.1);
   color: #fff;
   text-decoration: underline;
 }
@@ -201,14 +201,14 @@
 
 .harvey-form input:focus {
   border-color: var(--harvey-cyan);
-  box-shadow: 0 0 0 2px rgba(113, 230, 255, 0.18);
+  box-shadow: 0 0 0 2px rgba(255, 85, 115, 0.18);
 }
 
 .harvey-form button {
   width: 2.7rem;
   border: 0;
   border-radius: 0.5rem;
-  background: #087c9d;
+  background: #bd2d4b;
   color: #fff;
   cursor: pointer;
 }
@@ -234,7 +234,7 @@
 
   @keyframes harvey-pulse {
     50% {
-      box-shadow: inset 0 0 16px rgba(113, 230, 255, 0.35), 0 0 18px rgba(113, 230, 255, 0.55);
+      box-shadow: inset 0 0 16px rgba(255, 85, 115, 0.35), 0 0 18px rgba(255, 85, 115, 0.5);
     }
   }
 }
