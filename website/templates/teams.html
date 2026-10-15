@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}TEAMS // SILENCE{% endblock %}
+{% block content %}
+<section class="inner-hero">
+  <div class="inner-hero-copy">
+    <p class="hero-kicker"><span></span> SILENCE // COMPETITIVE PROGRAMS</p>
+    <h1>OUR <em>TEAMS.</em></h1>
+    <p>Different paths. Shared standard. Every roster is built around growth, teamwork, and the next round.</p>
+  </div>
+  <span class="inner-hero-index">01 / TEAMS</span>
+</section>
+<section class="content-section page-section">
+  <div class="section-topline"><span>ROSTER DIRECTORY</span><span>{{ teams|length }} PROGRAMS</span></div>
+  <div class="section-heading">
+    <div><p class="section-kicker">MEET THE SILENCE PROGRAMS</p><h2>BUILT TO <span>COMPETE.</span></h2></div>
+    <p class="section-aside">Roster details and announcements<br />will be shared here.</p>
+  </div>
+  <div class="team-grid team-grid-page">
+    {% for team in teams %}
+    <article class="team-card team-{{ team.color }}">
+      <div class="team-card-top"><span>{{ team.tag }}</span><span class="team-live"><i></i> PROGRAM</span></div>
+      <div class="team-card-mark"><img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" /><span>{{ team.mark }}</span></div>
+      <p class="team-discipline">{{ team.discipline }}</p>
+      <h3>{{ team.name }}</h3>
+      <p class="team-description">{{ team.description }}</p>
+      <span class="team-link">ROSTER ANNOUNCEMENTS <span aria-hidden="true">↗</span></span>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+<section class="page-cta">
+  <p class="section-kicker">THE NEXT ROUND STARTS TOGETHER</p>
+  <h2>READY TO <span>CONNECT?</span></h2>
+  <a class="button button-primary" href="{{ url_for('views.community') }}">VISIT THE COMMUNITY <span aria-hidden="true">↗</span></a>
+</section>
+{% endblock %}

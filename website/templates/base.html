@@ -6,12 +6,21 @@
     <meta name="theme-color" content="#09090d" />
     <title>{% block title %}SILENCE // SHHHH{% endblock %}</title>
     <meta name="description" content="SILENCE esports — stay quiet. Make noise in-game." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=DM+Sans:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css') }}" />
+    <style>
+      html, body { min-height: 100%; margin: 0; background: #09090d; color: #f4f2f2; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css', v='3') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='harvey.css') }}" />
   </head>
   <body id="top">

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}COMMUNITY // SILENCE{% endblock %}
+{% block content %}
+<section class="inner-hero inner-hero-community">
+  <div class="inner-hero-copy">
+    <p class="hero-kicker"><span></span> SILENCE // THE COMMUNITY</p>
+    <h1>FIND YOUR <em>PEOPLE.</em></h1>
+    <p>A home for players, fans, and creators who want to learn, compete, and build something together.</p>
+    <div class="hero-actions">
+      {% if user.is_authenticated %}
+      <a class="button button-primary" href="{{ url_for('views.notes') }}">OPEN YOUR NOTES <span aria-hidden="true">↗</span></a>
+      {% else %}
+      <a class="button button-primary" href="{{ url_for('auth.sign_up') }}">CREATE YOUR ACCOUNT <span aria-hidden="true">↗</span></a>
+      <a class="button button-ghost" href="{{ url_for('auth.login') }}">SIGN IN <span aria-hidden="true">↗</span></a>
+      {% endif %}
+    </div>
+  </div>
+  <span class="inner-hero-index">04 / COMMUNITY</span>
+</section>
+<section class="content-section page-section">
+  <div class="section-topline"><span>THE SILENCE COMMUNITY</span><span>PLAY // LEARN // GROW</span></div>
+  <div class="section-heading">
+    <div><p class="section-kicker">HOW TO BE PART OF IT</p><h2>YOUR NEXT <span>MOVE.</span></h2></div>
+    <p class="section-aside">Start with an account.<br />H.A.R.V.E.Y. is here to help.</p>
+  </div>
+  <div class="community-steps">
+    <article><span>01</span><h3>MAKE IT YOURS</h3><p>Create an account to keep your personal notes private and available when you return.</p><a href="{{ url_for('auth.sign_up') }}">CREATE AN ACCOUNT ↗</a></article>
+    <article><span>02</span><h3>MEET THE TEAMS</h3><p>Explore the current SILENCE programs and follow along as roster details are announced.</p><a href="{{ url_for('views.teams') }}">EXPLORE THE TEAMS ↗</a></article>
+    <article><span>03</span><h3>ASK H.A.R.V.E.Y.</h3><p>Open the assistant in the corner for help with the site, notes, and general questions.</p><button type="button" class="open-harvey">OPEN H.A.R.V.E.Y. ↗</button></article>
+  </div>
+  <div class="community-note"><strong>DISCORD INVITE</strong><span>A verified community invite hasn’t been added yet. We won’t send you to a placeholder or an unrelated server.</span></div>
+</section>
+{% endblock %}

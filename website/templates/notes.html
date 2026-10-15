@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}YOUR NOTES // SILENCE{% endblock %}
+{% block content %}
+<section class="inner-hero inner-hero-notes">
+  <div class="inner-hero-copy">
+    <p class="hero-kicker"><span></span> SILENCE // PRIVATE SPACE</p>
+    <h1>YOUR <em>NOTES.</em></h1>
+    <p>Keep reminders and ideas in one private place. These notes belong to your account.</p>
+  </div>
+  <span class="inner-hero-index">PRIVATE / {{ user.first_name|upper }}</span>
+</section>
+<section class="content-section page-section notes-section">
+  <div class="section-topline"><span>PRIVATE / YOUR SPACE</span><span>SHHHH</span></div>
+  <div class="notes-workspace">
+    <form method="POST" class="note-form">
+      <label for="note">WHAT DO YOU WANT TO REMEMBER?</label>
+      <textarea name="note" id="note" maxlength="10000" placeholder="Write a reminder, idea, or note..." required></textarea>
+      <div class="note-form-footer"><small>UP TO 10,000 CHARACTERS</small><button type="submit" class="button button-primary">SAVE NOTE <span aria-hidden="true">+</span></button></div>
+    </form>
+    <div class="saved-notes">
+      <div class="saved-notes-heading"><h3>SAVED NOTES</h3><span>{{ user.notes|length }}</span></div>
+      <div class="empty-notes" {% if user.notes %}hidden{% endif %}><span aria-hidden="true">///</span><p>Nothing here yet. Save your first note.</p></div>
+      <ul id="notes">
+        {% for note in user.notes %}
+        <li><span class="note-index">/ {{ "%02d"|format(loop.index) }}</span><span class="note-text">{{ note.data }}</span><button type="button" class="delete-note" data-note-id="{{ note.id }}" aria-label="Delete note" title="Delete note">×</button></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}
