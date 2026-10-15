@@ -44,7 +44,7 @@ def create_app(test_config=None):
                 error="Your session has expired. Sign in again to continue.",
                 loginUrl=url_for("auth.login"),
             ), 401
-        return redirect(url_for(login_manager.login_view, next=request.url))
+        return redirect(url_for(login_manager.login_view, next=request.full_path))
 
     from .views import views
     from .auth import auth

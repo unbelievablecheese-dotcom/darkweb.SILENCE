@@ -217,8 +217,17 @@
       return;
     }
 
-    if (/^(go to )?(home|notes|notes page|the notes page)$/.test(command)) {
-      window.location.assign("/");
+    const destinations = {
+      home: "/",
+      teams: "/teams",
+      merch: "/merch",
+      content: "/content",
+      community: "/community",
+      notes: "/notes",
+    };
+    const destinationMatch = command.match(/^(?:go to |open )?(home|teams|merch|content|community|notes)(?: page)?$/);
+    if (destinationMatch) {
+      window.location.assign(destinations[destinationMatch[1]]);
       return;
     }
 

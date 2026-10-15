@@ -51,7 +51,7 @@ def home():
     if request.method == 'POST':
         if not current_user.is_authenticated:
             flash('Sign in to save a private note.', category='error')
-            return redirect(url_for('auth.login', next=url_for('views.home', _anchor='your-notes')))
+            return redirect(url_for('auth.login', next=url_for('views.notes')))
 
         note = request.form.get('note', '').strip()
 
@@ -64,13 +64,47 @@ def home():
             db.session.add(new_note)
             db.session.commit()
             flash('Note added!', category='success')
-            return redirect(url_for('views.home'))
+            return redirect(url_for('views.notes'))
 
-    return render_template(
-        'home.html',
-        user=current_user,
-        teams=TEAMS,
-    )
+    return render_template('home.html', user=current_user, teams=TEAMS[:3])
+
+
+@views.route('/teams')
+def teams():
+    return render_template('teams.html', user=current_user, teams=TEAMS)
+
+
+@views.route('/merch')
+def merch():
+    return render_template('merch.html', user=current_user)
+
+
+@views.route('/content')
+def content():
+    return render_template('content.html', user=current_user)
+
+
+@views.route('/community')
+def community():
+    return render_template('community.html', user=current_user)
+
+
+@views.route('/notes', methods=['GET', 'POST'])
+@login_required
+def notes():
+    if request.method == 'POST':
+        note_text = request.form.get('note', '').strip()
+        if not note_text:
+            flash('Your note cannot be empty.', category='error')
+        elif len(note_text) > 10000:
+            flash('Note must be 10,000 characters or fewer.', category='error')
+        else:
+            db.session.add(Note(data=note_text, user_id=current_user.id))
+            db.session.commit()
+            flash('Note saved.', category='success')
+            return redirect(url_for('views.notes'))
+
+    return render_template('notes.html', user=current_user)
 
 
 @views.route('/delete-note', methods=['POST'])
