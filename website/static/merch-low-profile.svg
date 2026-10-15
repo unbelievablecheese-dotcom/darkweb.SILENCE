@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title desc">
+  <title id="title">SILENCE Low Profile cap embroidery</title>
+  <desc id="desc">Original compact two-color monogram designed for cap embroidery.</desc>
+  <path d="M60 8 104 34v52l-44 26L16 86V34z" fill="none" stroke="#f4f0ed" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M32 46h56M32 74h56" stroke="#ff365e" stroke-width="4"/>
+  <text x="60" y="68" fill="#f4f0ed" font-family="Arial,sans-serif" font-size="25" font-weight="700" text-anchor="middle" letter-spacing="2">S</text>
+  <path d="M44 87h32" stroke="#f4f0ed" stroke-width="3"/>
+</svg>

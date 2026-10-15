@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 400" role="img" aria-labelledby="title desc">
+  <title id="title">SILENCE After Hours hoodie print</title>
+  <desc id="desc">Original oversized SILENCE back print with orbital lines, red slash, and a night-session label.</desc>
+  <g fill="none">
+    <circle cx="180" cy="155" r="119" stroke="#d8d2da" stroke-opacity=".25" stroke-width="1"/>
+    <circle cx="180" cy="155" r="96" stroke="#8c6ae8" stroke-opacity=".8" stroke-width="1"/>
+    <circle cx="180" cy="155" r="73" stroke="#d8d2da" stroke-opacity=".35" stroke-width="1" stroke-dasharray="2 7"/>
+    <path d="M44 155h272M180 19v272" stroke="#d8d2da" stroke-opacity=".2" stroke-width="1"/>
+    <path d="M73 252 253 58" stroke="#ff365e" stroke-width="8"/>
+    <path d="M81 252h198" stroke="#f4f0ed" stroke-opacity=".55" stroke-width="1"/>
+  </g>
+  <circle cx="180" cy="155" r="31" fill="#101016" stroke="#f4f0ed" stroke-width="2"/>
+  <path d="M163 155h34m-17-17v34" stroke="#ff365e" stroke-width="3"/>
+  <text x="180" y="324" fill="#f4f0ed" font-family="Arial,sans-serif" font-size="27" font-weight="700" text-anchor="middle" letter-spacing="5">AFTER HOURS</text>
+  <text x="180" y="347" fill="#ff365e" font-family="Arial,sans-serif" font-size="10" font-weight="700" text-anchor="middle" letter-spacing="3">QUIET OFFLINE / LOUD IN-GAME</text>
+  <text x="180" y="379" fill="#b6b0ba" font-family="Arial,sans-serif" font-size="8" text-anchor="middle" letter-spacing="2">SILENCE SUPPLY / SHHHH 002</text>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 300" role="img" aria-labelledby="title desc">
+  <title id="title">SILENCE Core Tee print</title>
+  <desc id="desc">Original geometric SILENCE chest graphic in warm white and signal red.</desc>
+  <g fill="none" stroke="#f4f0ed" stroke-width="2">
+    <path d="M22 18h48M22 18v48M238 282h-48M238 282v-48"/>
+    <path d="M22 78h216" opacity=".35"/>
+    <path d="M22 222h216" opacity=".35"/>
+  </g>
+  <text x="24" y="54" fill="#f4f0ed" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="4">SILENCE</text>
+  <text x="238" y="53" fill="#ff365e" font-family="Arial,sans-serif" font-size="10" font-weight="700" text-anchor="end" letter-spacing="2">SHHHH / 001</text>
+  <path d="M32 125h20l9-24 13 62 12-40 10 21h19" fill="none" stroke="#ff365e" stroke-linecap="square" stroke-linejoin="miter" stroke-width="5"/>
+  <path d="M124 108v52m14-68v84m14-65v46m14-58v70m14-42v14" stroke="#f4f0ed" stroke-width="5"/>
+  <circle cx="211" cy="134" r="26" fill="none" stroke="#ff365e" stroke-width="2"/>
+  <path d="M200 134h22m-11-11v22" stroke="#f4f0ed" stroke-width="2"/>
+  <text x="24" y="199" fill="#f4f0ed" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="2">STAY QUIET.</text>
+  <text x="24" y="215" fill="#ff365e" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="2">MAKE NOISE IN-GAME.</text>
+  <text x="24" y="260" fill="#b6b0ba" font-family="Arial,sans-serif" font-size="8" letter-spacing="2">COMPETITIVE DIVISION / FIELD STUDY 01</text>
+</svg>
