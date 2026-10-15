@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}SILENCE RADIO // LOOP{% endblock %}
+{% block content %}
+<section class="content-section page-section radio-page">
+  <p class="section-kicker">SILENCE // OPTIONAL MUSIC</p>
+  <h1>SILENCE <span>RADIO.</span></h1>
+  <p>The player is set to loop when you choose the music button. YouTube may block autoplay or embedding for this video. Its video and playback controls remain visible.</p>
+  <button class="button button-primary" type="button" id="radio-page-play">PLAY SILENCE RADIO <span aria-hidden="true">♫</span></button>
+  <p><a class="team-vlr-link" href="https://youtu.be/NcauOz6DCeg" target="_blank" rel="noopener noreferrer">OPEN VIDEO ON YOUTUBE ↗</a></p>
+</section>
+<script>
+  document.getElementById("radio-page-play")?.addEventListener("click", () => {
+    document.getElementById("silence-radio-toggle")?.click();
+    document.getElementById("silence-radio-toggle")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+</script>
+{% endblock %}

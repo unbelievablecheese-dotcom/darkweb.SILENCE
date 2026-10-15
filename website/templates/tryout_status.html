@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}TRYOUT STATUS // SILENCE{% endblock %}
+{% block content %}
+<section class="auth-card tryout-status-card">
+  <p class="section-kicker">SILENCE // PLAYER TRYOUTS</p>
+  {% if status_code and application %}
+  <h1>APPLICATION RECEIVED.</h1>
+  <p class="auth-description">Keep this private tracking code. It is shown only once and lets you check the latest review status.</p>
+  <code class="tryout-code">{{ status_code }}</code>
+  <p class="tryout-status-label">CURRENT STATUS <strong>{{ application.status|upper }}</strong></p>
+  <p class="auth-description">Save the code somewhere private. SILENCE staff will update the status when your application is reviewed.</p>
+  <a class="button button-ghost" href="{{ url_for('views.tryout_status') }}">GO TO STATUS CHECK ↗</a>
+  {% elif application %}
+  <h1>APPLICATION STATUS.</h1>
+  <p class="auth-description">This page shows the latest review status without exposing your submitted answers.</p>
+  <p class="tryout-status-label">CURRENT STATUS <strong>{{ application.status|upper }}</strong></p>
+  <p class="tryout-status-label">SUBMITTED <strong>{{ application.submitted_at.strftime('%b %d, %Y') }}</strong></p>
+  {% else %}
+  <h1>TRACK YOUR TRYOUT.</h1>
+  <p class="auth-description">Enter the private code shown after you submitted your player questionnaire.</p>
+  <form method="post" class="auth-form">
+    <label for="status_code">PRIVATE TRACKING CODE</label>
+    <input id="status_code" name="status_code" type="text" maxlength="100" autocomplete="off" required />
+    <button class="auth-submit" type="submit">CHECK STATUS</button>
+  </form>
+  {% endif %}
+  <p class="auth-switch"><a href="{{ url_for('views.community') }}#join-silence">RETURN TO COMMUNITY</a></p>
+</section>
+{% endblock %}

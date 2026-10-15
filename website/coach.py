@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from email.message import EmailMessage
 from urllib.parse import urlparse
 
+import httpx
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
@@ -20,18 +21,11 @@ TOKEN_MAX_AGE = 7 * 24 * 60 * 60
 
 
 def mail_configuration():
-    host = os.environ.get('SMTP_HOST', '').strip()
-    username = os.environ.get('SMTP_USERNAME', '').strip()
-    password = os.environ.get('SMTP_PASSWORD', '')
-    sender = os.environ.get('SMTP_FROM', username).strip()
+    provider = os.environ.get('EMAIL_PROVIDER', 'smtp').strip().lower()
     base_url = os.environ.get('PUBLIC_BASE_URL', '').strip().rstrip('/')
     parsed_base_url = urlparse(base_url)
     if (
-        not host
-        or not username
-        or not password
-        or not sender
-        or parsed_base_url.scheme != 'https'
+        parsed_base_url.scheme != 'https'
         or not parsed_base_url.netloc
         or parsed_base_url.path not in ('', '/')
         or parsed_base_url.query
@@ -40,7 +34,29 @@ def mail_configuration():
         or parsed_base_url.password is not None
     ):
         return None
-    return host, username, password, sender, base_url
+    if provider == 'resend':
+        api_key = os.environ.get('RESEND_API_KEY', '').strip()
+        sender = os.environ.get('RESEND_FROM', '').strip()
+        if not api_key or not sender:
+            return None
+        return {'provider': provider, 'api_key': api_key, 'sender': sender, 'base_url': base_url}
+    if provider != 'smtp':
+        return None
+
+    host = os.environ.get('SMTP_HOST', '').strip()
+    username = os.environ.get('SMTP_USERNAME', '').strip()
+    password = os.environ.get('SMTP_PASSWORD', '')
+    sender = os.environ.get('SMTP_FROM', username).strip()
+    if not host or not username or not password or not sender:
+        return None
+    return {
+        'provider': provider,
+        'host': host,
+        'username': username,
+        'password': password,
+        'sender': sender,
+        'base_url': base_url,
+    }
 
 
 def approval_serializer():
@@ -52,15 +68,10 @@ def send_approval_email(coach_request):
     if configuration is None:
         raise RuntimeError('Coach approval email settings are incomplete.')
 
-    host, username, password, sender, base_url = configuration
     token = approval_serializer().dumps({'request_id': coach_request.id})
-    approval_url = f"{base_url}{url_for('coach.approve_request', token=token)}"
+    approval_url = f"{configuration['base_url']}{url_for('coach.approve_request', token=token)}"
 
-    message = EmailMessage()
-    message['Subject'] = 'SILENCE coach account approval requested'
-    message['From'] = sender
-    message['To'] = APPROVAL_EMAIL
-    message.set_content(
+    email_text = (
         f"A coach account is awaiting your approval.\n\n"
         f"Name: {coach_request.user.first_name}\n"
         f"Email: {coach_request.user.email}\n\n"
@@ -70,18 +81,38 @@ def send_approval_email(coach_request):
         "If you did not expect this request, ignore this email."
     )
 
-    port = int(os.environ.get('SMTP_PORT', '587'))
-    if port == 465:
-        with smtplib.SMTP_SSL(host, port, timeout=15) as server:
-            server.login(username, password)
-            server.send_message(message)
+    if configuration['provider'] == 'resend':
+        response = httpx.post(
+            'https://api.resend.com/emails',
+            headers={'Authorization': f"Bearer {configuration['api_key']}"},
+            json={
+                'from': configuration['sender'],
+                'to': [APPROVAL_EMAIL],
+                'subject': 'SILENCE coach account approval requested',
+                'text': email_text,
+            },
+            timeout=15,
+        )
+        response.raise_for_status()
     else:
-        with smtplib.SMTP(host, port, timeout=15) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(username, password)
-            server.send_message(message)
+        message = EmailMessage()
+        message['Subject'] = 'SILENCE coach account approval requested'
+        message['From'] = configuration['sender']
+        message['To'] = APPROVAL_EMAIL
+        message.set_content(email_text)
+
+        port = int(os.environ.get('SMTP_PORT', '587'))
+        if port == 465:
+            with smtplib.SMTP_SSL(configuration['host'], port, timeout=15) as server:
+                server.login(configuration['username'], configuration['password'])
+                server.send_message(message)
+        else:
+            with smtplib.SMTP(configuration['host'], port, timeout=15) as server:
+                server.ehlo()
+                server.starttls()
+                server.ehlo()
+                server.login(configuration['username'], configuration['password'])
+                server.send_message(message)
     coach_request.last_email_sent_at = int(time.time())
     db.session.commit()
 
@@ -131,7 +162,7 @@ def register_coach_account():
 
         try:
             send_approval_email(coach_request)
-        except (OSError, smtplib.SMTPException, RuntimeError, ValueError):
+        except (OSError, httpx.HTTPError, smtplib.SMTPException, RuntimeError, ValueError):
             current_app.logger.exception('Could not email the SILENCE coach approval request')
             flash(
                 'Your account and coach request were saved, but the approval email could not be sent. '
@@ -199,7 +230,7 @@ def resend_request_email():
         return redirect(url_for('coach.request_status'))
     try:
         send_approval_email(coach_request)
-    except (OSError, smtplib.SMTPException, RuntimeError, ValueError):
+    except (OSError, httpx.HTTPError, smtplib.SMTPException, RuntimeError, ValueError):
         current_app.logger.exception('Could not resend the SILENCE coach approval request')
         flash('The approval email could not be sent. Check mail settings and try again.', category='error')
     else:

@@ -56,27 +56,43 @@ configured as private Render environment variables as well.
 ## Coach account approval email
 
 Coach signup creates a normal member account with a pending coach request.
-Coach-only tools stay locked until the owner approves the request. Configure
-these private Render environment variables before enabling coach signup:
+Coach-only tools stay locked until the owner approves the request. A provider
+must be configured before coach signup or approval-email resend is enabled.
 
-- `PUBLIC_BASE_URL`: the public HTTPS URL of the deployed site, without a
-  trailing slash (for example, `https://your-site.onrender.com`).
-- `SMTP_HOST`: your outgoing email provider's SMTP host. For Gmail, use
-  `smtp.gmail.com`.
-- `SMTP_PORT`: `587` for STARTTLS or `465` for SMTP SSL.
-- `SMTP_USERNAME`: the sending email account.
-- `SMTP_PASSWORD`: the provider's app password or SMTP credential, never the
-  account's ordinary sign-in password.
-- `SMTP_FROM`: the sender address; it can be the same as `SMTP_USERNAME`.
+### Resend HTTPS API (recommended for Render)
 
-For Gmail, enable 2-Step Verification on the sending account and create a
-Google App Password. Do not use or share the Gmail account's regular password.
-Keep `SECRET_KEY` stable across restarts and redeploys so pending approval links
-remain valid. After adding these settings, redeploy. Coach applications will
-then be available from the **COACH?** button on the sign-in page. The approval
-email goes to `unbelievablecheese@gmail.com`; opening its seven-day link shows
-the applicant details and requires clicking **APPROVE COACH**. The email link
-is single-use, and link previews do not approve requests.
+1. Create a Resend account and verify a domain you control in its Domains
+   settings. Follow Resend's DNS instructions before sending from that domain.
+2. Create a Resend API key with permission to send email.
+3. In Render's web-service **Environment** settings, add:
+   - `EMAIL_PROVIDER` = `resend`
+   - `RESEND_API_KEY` = your private Resend API key
+   - `RESEND_FROM` = a sender on the verified domain, such as
+     `SILENCE <coach@yourdomain.com>`
+   - `PUBLIC_BASE_URL` = the deployed site's HTTPS origin, without a path or
+     trailing slash, such as `https://your-site.onrender.com`
+4. Save changes and wait for Render to redeploy. Keep `SECRET_KEY` stable so
+   existing approval links remain valid.
+
+The app sends the approval message to `unbelievablecheese@gmail.com` through
+Resend's HTTPS API. The API key is used only on the server and must never go
+in frontend code, source control, or chat. After configuring, sign in to the
+pending coach account and use **Resend Approval Email**. Check Render logs if
+the send still fails, and check the Resend dashboard for API errors or delivery
+events.
+
+### SMTP alternative
+
+Alternatively, set `EMAIL_PROVIDER` to `smtp` (or leave it unset), and provide
+`SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and optionally
+`SMTP_FROM`. For Gmail SMTP, use `smtp.gmail.com`, port `587`, and an App
+Password created after enabling 2-Step Verification; never use the account's
+normal password.
+
+The approval email recipient is fixed to `unbelievablecheese@gmail.com`.
+Opening the seven-day signed link only shows the request; the owner must click
+**APPROVE COACH**. Approval links are single-use, and link previews do not
+approve requests.
 
 ## Match center, tryout tracking, profiles, and news
 

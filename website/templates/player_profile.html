@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}{{ player.name|upper }} // SILENCE ROSTER{% endblock %}
+{% block content %}
+<section class="inner-hero">
+  <div class="inner-hero-copy">
+    <p class="hero-kicker"><span></span> SILENCE // PLAYER PROFILE</p>
+    <h1>{{ player.name|upper }}<em>.</em></h1>
+    <p>VLR-listed SILENCE roster profile. This page only displays information with a public source; personal settings and hardware details are not verified here.</p>
+  </div>
+  <span class="inner-hero-index">ROSTER / {{ player.slug|upper }}</span>
+</section>
+<section class="content-section page-section">
+  <article class="player-profile-card">
+    <p class="section-kicker">PUBLIC PLAYER INFORMATION</p>
+    <h2>{{ player.name }}</h2>
+    <p>Current roster listing and additional public information may change. Check the player's VLR profile for current competitive details.</p>
+    {% if profile and (profile.role or profile.rank or profile.bio or profile.social_url or profile.settings or profile.pc_specs) %}
+    <div class="player-profile-details">
+      {% if profile.role %}<p><span>ROLE</span><strong>{{ profile.role }}</strong></p>{% endif %}
+      {% if profile.rank %}<p><span>RANK / LEVEL</span><strong>{{ profile.rank }}</strong></p>{% endif %}
+      {% if profile.bio %}<p><span>PLAYER BIO</span><strong>{{ profile.bio }}</strong></p>{% endif %}
+      {% if profile.social_url %}<p><span>SOCIAL</span><strong><a href="{{ profile.social_url }}" target="_blank" rel="noopener noreferrer">PLAYER PROFILE ↗</a></strong></p>{% endif %}
+      {% if profile.settings %}<p><span>IN-GAME SETTINGS</span><strong>{{ profile.settings }}</strong></p>{% endif %}
+      {% if profile.pc_specs %}<p><span>PC SPECS</span><strong>{{ profile.pc_specs }}</strong></p>{% endif %}
+      <small>Details published by SILENCE staff. Information can change; confirm personal settings directly with the player.</small>
+    </div>
+    {% else %}
+    <div class="player-profile-disclaimer">
+      <span>PLAYER DETAILS</span>
+      <strong>No role, rank, bio, social, settings, or PC specs have been published here yet.</strong>
+    </div>
+    {% endif %}
+    <a class="button button-primary" href="{{ player.url }}" target="_blank" rel="noopener noreferrer">OPEN PUBLIC VLR PROFILE ↗</a>
+  </article>
+  <a class="team-vlr-link" href="{{ url_for('views.teams') }}#silence-roster">← BACK TO THE SILENCE ROSTER</a>
+</section>
+{% endblock %}

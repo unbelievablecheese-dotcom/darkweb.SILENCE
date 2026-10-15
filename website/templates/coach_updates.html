@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}SITE UPDATES // SILENCE{% endblock %}
+{% block content %}
+<section class="inner-hero">
+  <div class="inner-hero-copy">
+    <p class="hero-kicker"><span></span> SILENCE // PRIVATE STAFF AREA</p>
+    <h1>SITE <em>UPDATES.</em></h1>
+    <p>Publish official news and confirmed match fixtures. Only approved SILENCE coaches can manage public updates.</p>
+  </div>
+  <span class="inner-hero-index">STAFF / UPDATES</span>
+</section>
+<section class="content-section page-section coach-updates-grid">
+  <form class="coach-update-form" method="post">
+    <input type="hidden" name="action" value="announcement" />
+    <p class="section-kicker">NEWS & ANNOUNCEMENTS</p>
+    <h2>PUBLISH <span>NEWS.</span></h2>
+    <label>TITLE<input name="title" maxlength="120" required /></label>
+    <label>ANNOUNCEMENT<textarea name="body" maxlength="2000" rows="5" required></textarea></label>
+    <button class="button button-primary" type="submit">PUBLISH ANNOUNCEMENT</button>
+  </form>
+  <form class="coach-update-form" method="post">
+    <input type="hidden" name="action" value="match" />
+    <p class="section-kicker">CONFIRMED FIXTURE</p>
+    <h2>SCHEDULE A <span>MATCH.</span></h2>
+    <label>OPPONENT<input name="opponent" maxlength="120" required /></label>
+    <label>EVENT / LEAGUE<input name="event" maxlength="160" required /></label>
+    <label>KICKOFF DATE & TIME (UTC)<input type="datetime-local" name="starts_at" required /></label>
+    <label>STREAM URL (OPTIONAL)<input type="url" name="stream_url" maxlength="500" placeholder="https://" /></label>
+    <button class="button button-primary" type="submit">PUBLISH FIXTURE</button>
+  </form>
+  <section class="coach-update-list coach-profile-editor">
+    <p class="section-kicker">PLAYER-APPROVED PUBLIC DETAILS</p>
+    <h2>ROSTER <span>PROFILES.</span></h2>
+    <p>Only publish player-approved information that staff have checked. Leave fields blank to hide them from the public profile.</p>
+    {% for profile in profiles %}
+    <form class="coach-profile-form" method="post">
+      <input type="hidden" name="action" value="profile" />
+      <input type="hidden" name="slug" value="{{ profile.slug }}" />
+      <strong>{{ profile.name }}</strong>
+      <label>ROLE<input name="role" maxlength="120" value="{{ profile.role or '' }}" /></label>
+      <label>RANK / COMPETITIVE LEVEL<input name="rank" maxlength="120" value="{{ profile.rank or '' }}" /></label>
+      <label>SHORT BIO<textarea name="bio" maxlength="1200" rows="2">{{ profile.bio or '' }}</textarea></label>
+      <label>PUBLIC SOCIAL LINK<input name="social_url" type="url" maxlength="500" value="{{ profile.social_url or '' }}" placeholder="https://" /></label>
+      <label>IN-GAME SETTINGS<input name="settings" maxlength="500" value="{{ profile.settings or '' }}" /></label>
+      <label>PC SPECS<input name="pc_specs" maxlength="500" value="{{ profile.pc_specs or '' }}" /></label>
+      <button class="button button-ghost" type="submit">SAVE PROFILE</button>
+    </form>
+    {% endfor %}
+  </section>
+  <section class="coach-update-list">
+    <p class="section-kicker">CURRENTLY PUBLISHED</p>
+    {% for announcement in announcements %}
+    <article><div><strong>{{ announcement.title }}</strong><p>{{ announcement.created_at.strftime('%b %d, %Y') }}</p></div><form method="post" action="{{ url_for('coach.delete_update', content_type='announcement', content_id=announcement.id) }}"><button class="button button-ghost" type="submit">REMOVE</button></form></article>
+    {% endfor %}
+    {% for fixture in fixtures %}
+    <article><div><strong>SILENCE VS {{ fixture.opponent }}</strong><p>{{ fixture.event }} · {{ fixture.starts_at.strftime('%b %d, %Y %H:%M UTC') }}</p></div><form method="post" action="{{ url_for('coach.delete_update', content_type='match', content_id=fixture.id) }}"><button class="button button-ghost" type="submit">REMOVE</button></form></article>
+    {% endfor %}
+    {% if not announcements and not fixtures %}<p>No news or fixtures published yet.</p>{% endif %}
+  </section>
+</section>
+{% endblock %}

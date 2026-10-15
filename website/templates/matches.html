@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}MATCH CENTER // SILENCE{% endblock %}
+{% block content %}
+<section class="inner-hero">
+  <div class="inner-hero-copy">
+    <p class="hero-kicker"><span></span> SILENCE // MATCH CENTER</p>
+    <h1>EVERY ROUND.<br /><em>ON RECORD.</em></h1>
+    <p>Upcoming fixtures and recent VLR-listed results. Match details are published by SILENCE staff; check the event page for final updates.</p>
+  </div>
+  <span class="inner-hero-index">MATCH CENTER</span>
+</section>
+<section class="content-section page-section">
+  <section class="match-hub-section">
+    <div class="section-heading">
+      <div><p class="section-kicker">WHAT'S NEXT</p><h2>UPCOMING <span>FIXTURES.</span></h2></div>
+      {% if user.is_authenticated and is_coach(user) %}
+      <a class="team-record-source" href="{{ url_for('coach.updates') }}">MANAGE FIXTURES ↗</a>
+      {% endif %}
+    </div>
+    {% if fixtures %}
+    <div class="fixture-grid">
+      {% for fixture in fixtures %}
+      <article class="fixture-card">
+        <p class="section-kicker">{{ fixture.event }}</p>
+        <h3>SILENCE <span>VS</span> {{ fixture.opponent }}</h3>
+        <time datetime="{{ fixture.starts_at.isoformat() }}">{{ fixture.starts_at.strftime('%a, %b %d, %Y · %H:%M UTC') }}</time>
+        {% if fixture.stream_url %}<a href="{{ fixture.stream_url }}" target="_blank" rel="noopener noreferrer">WATCH MATCH ↗</a>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="match-empty"><strong>NO FIXTURES ANNOUNCED</strong><p>We’ll publish the next match here once the schedule is confirmed.</p></div>
+    {% endif %}
+  </section>
+
+  <section class="match-hub-section">
+    <div class="team-record-heading">
+      <div><p class="section-kicker">VLR // COMPLETED MATCHES</p><h2>RECENT <span>RESULTS.</span></h2></div>
+      <a class="team-record-source" href="https://www.vlr.gg/team/22912/silence" target="_blank" rel="noopener noreferrer">VIEW SILENCE ON VLR ↗</a>
+    </div>
+    <p class="team-record-scope">Snapshot checked {{ matches_checked }}. This list is not the team's all-time record.</p>
+    <div class="team-record-panel">
+      <div class="team-record-stats" aria-label="Match record statistics">
+        <div><span>WINS</span><strong>{{ record.wins }}</strong></div>
+        <div><span>LOSSES</span><strong>{{ record.losses }}</strong></div>
+        <div><span>WIN RATE</span><strong>{{ '%.0f'|format(record.win_percent) }}%</strong></div>
+        <div><span>MATCHES</span><strong>{{ record.played }}</strong></div>
+      </div>
+      <ol class="team-match-list" aria-label="VLR-listed match results">
+        {% for match in matches %}
+        <li class="team-match team-match-{{ match.result }}">
+          <span class="team-match-outcome" aria-label="{{ match.result }}">{{ 'W' if match.result == 'win' else 'L' }}</span>
+          <div class="team-match-details"><strong>SILENCE <span>{{ match.score }}</span> {{ match.opponent }}</strong><small>{{ match.event }}</small></div>
+          <time datetime="{{ match.date }}">{{ match.date }}</time>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+    <p class="team-record-attribution">Results sourced from the <a href="https://www.vlr.gg/team/22912/silence" target="_blank" rel="noopener noreferrer">SILENCE VLR profile</a>. Staff can schedule fixtures and publish streams from the private site updates page.</p>
+  </section>
+</section>
+{% endblock %}
