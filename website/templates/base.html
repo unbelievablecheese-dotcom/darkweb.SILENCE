@@ -20,7 +20,7 @@
     <style>
       html, body { min-height: 100%; margin: 0; background: #09090d; color: #f4f2f2; }
     </style>
-    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css', v='4') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css', v='5') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='harvey.css') }}" />
   </head>
   <body id="top">
@@ -84,7 +84,7 @@
           <input id="harvey-input" type="text" autocomplete="off" maxlength="500" placeholder="Type a message..." required />
           <button type="submit" aria-label="Send message" title="Send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
         </form>
-        <p class="harvey-privacy">AI replies need the SILENCE Gemini service. Don’t share passwords or private keys.</p>
+        <p class="harvey-privacy">AI replies use GroqCloud. Don’t share passwords or private keys.</p>
       </div>
     </section>
 

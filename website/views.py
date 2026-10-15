@@ -1,10 +1,8 @@
 import os
 
-from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, url_for
+import httpx
+from flask import Blueprint, Response, current_app, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
-from google import genai
-from google.genai.errors import APIError
-from httpx import HTTPError
 
 from . import db
 from .models import Note
@@ -144,6 +142,54 @@ def community():
     )
 
 
+@views.route('/join-silence/application', methods=['POST'])
+def join_application():
+    fields = (
+        ('name', 'Name / gamer tag', 100),
+        ('email', 'Contact email', 254),
+        ('game', 'Game and platform', 100),
+        ('role', 'Preferred role', 100),
+        ('rank', 'Current rank / level', 100),
+        ('region', 'Region and time zone', 100),
+        ('experience', 'Competitive experience', 1200),
+        ('availability', 'Practice availability', 500),
+        ('profile', 'Tracker / profile / VOD links', 500),
+        ('motivation', 'Why do you want to join SILENCE?', 1200),
+    )
+    answers = {}
+    for key, label, max_length in fields:
+        value = request.form.get(key, '').strip()
+        if not value:
+            flash(f'{label} is required.', category='error')
+            return redirect(url_for('views.community') + '#join-silence')
+        if len(value) > max_length:
+            flash(f'{label} must be {max_length} characters or fewer.', category='error')
+            return redirect(url_for('views.community') + '#join-silence')
+        answers[key] = value
+
+    email_parts = answers['email'].split('@')
+    if (
+        len(email_parts) != 2
+        or not email_parts[0]
+        or '.' not in email_parts[1]
+        or email_parts[1].startswith('.')
+        or email_parts[1].endswith('.')
+        or any(character.isspace() for character in answers['email'])
+    ):
+        flash('Enter a valid contact email.', category='error')
+        return redirect(url_for('views.community') + '#join-silence')
+
+    application_text = '\n'.join(
+        ['SILENCE // ESPORTS PLAYER APPLICATION', '=' * 38, '']
+        + [f'{label}: {answers[key]}' for key, label, _ in fields]
+        + ['', 'Prepared on this device. This application was not sent to SILENCE.']
+    )
+    response = Response(application_text, mimetype='text/plain; charset=utf-8')
+    response.headers['Content-Disposition'] = 'attachment; filename="silence-player-application.txt"'
+    response.headers['Cache-Control'] = 'no-store'
+    return response
+
+
 @views.route('/notes', methods=['GET', 'POST'])
 @login_required
 def notes():
@@ -188,31 +234,49 @@ def harvey_chat():
     if not isinstance(message, str) or not message.strip() or len(message) > 2000:
         return jsonify(error='Send a message of 1–2000 characters.'), 400
 
-    api_key = os.environ.get('GEMINI_API_KEY')
+    api_key = os.environ.get('GROQ_API_KEY')
     if not api_key:
-        return jsonify(error='H.A.R.V.E.Y. AI is not configured yet.'), 503
+        return jsonify(error='H.A.R.V.E.Y. needs a GROQ_API_KEY environment variable to connect to GroqCloud.'), 503
 
-    prompt = (
-        'You are H.A.R.V.E.Y., a polite, concise assistant on SILENCE, an esports community website. '
-        'Help with general questions, gaming and esports topics, and the user’s private notes. '
-        'You cannot access or modify website files, accounts, or deployments, so never '
-        'claim that you have performed those actions. Do not request or reveal secrets. '
-        f'\n\nUser message:\n{message.strip()}'
-    )
+    messages = [
+        {
+            'role': 'system',
+            'content': (
+                'You are H.A.R.V.E.Y., a polite, concise assistant on SILENCE, an esports community website. '
+                'Help with general questions, gaming and esports topics, and navigating the site. '
+                'You cannot access or modify website files, accounts, private notes, or deployments, '
+                'so never claim you have performed those actions. Do not request or reveal secrets.'
+            ),
+        },
+        {'role': 'user', 'content': message.strip()},
+    ]
 
     try:
-        client = genai.Client(api_key=api_key)
-        interaction = client.interactions.create(
-            model=os.environ.get('GEMINI_MODEL', 'gemini-3.8-flash'),
-            input=prompt,
+        api_response = httpx.post(
+            'https://api.groq.com/openai/v1/chat/completions',
+            headers={'Authorization': f'Bearer {api_key}'},
+            json={
+                'model': os.environ.get('GROQ_MODEL', 'openai/gpt-oss-120b'),
+                'messages': messages,
+                'max_completion_tokens': 1024,
+            },
+            timeout=30,
         )
-    except (APIError, HTTPError, TimeoutError):
-        current_app.logger.exception('Gemini API request failed')
-        return jsonify(error='H.A.R.V.E.Y. could not get a response from Gemini.'), 502
+        api_response.raise_for_status()
+    except httpx.HTTPStatusError as error:
+        current_app.logger.error('Groq API returned HTTP %s', error.response.status_code)
+        return jsonify(error='H.A.R.V.E.Y. could not get a response from GroqCloud. Check the API key, model, and account limits.'), 502
+    except (httpx.HTTPError, TimeoutError):
+        current_app.logger.exception('Groq API request failed')
+        return jsonify(error='H.A.R.V.E.Y. could not connect to GroqCloud. Please try again.'), 502
 
-    reply = interaction.output_text
+    try:
+        reply = api_response.json()['choices'][0]['message']['content']
+    except (ValueError, KeyError, IndexError, TypeError):
+        current_app.logger.error('Groq returned a response without message text')
+        return jsonify(error='GroqCloud returned an empty or unreadable response. Please try again.'), 502
     if not isinstance(reply, str) or not reply.strip():
-        current_app.logger.error('Gemini returned an empty text response')
-        return jsonify(error='Gemini returned an empty response. Please try again.'), 502
+        current_app.logger.error('Groq returned an empty text response')
+        return jsonify(error='GroqCloud returned an empty response. Please try again.'), 502
 
     return jsonify(reply=reply.strip())

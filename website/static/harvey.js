@@ -76,7 +76,7 @@
     speak(message);
   }
 
-  async function askGemini(message) {
+  async function askHarvey(message) {
     setStatus("Thinking…");
 
     try {
@@ -251,7 +251,7 @@
       return;
     }
 
-    await askGemini(rawCommand.trim());
+    await askHarvey(rawCommand.trim());
   }
 
   toggle.addEventListener("click", () => {
