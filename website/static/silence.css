@@ -1700,7 +1700,7 @@ a {
   right: 24px;
   width: 94px;
   height: 94px;
-  background: url("silence-logo.png") center / contain no-repeat;
+  background: url("silence-logo.png?v=2") center / contain no-repeat;
   content: "";
   opacity: 0.22;
   mix-blend-mode: screen;

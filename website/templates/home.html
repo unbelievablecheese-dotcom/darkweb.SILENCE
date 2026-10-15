@@ -18,7 +18,7 @@
   </div>
   <div class="hero-emblem" aria-label="SILENCE team emblem">
     <div class="emblem-ring"></div>
-    <img src="{{ url_for('static', filename='silence-logo.png') }}" alt="SILENCE shushing emblem" />
+    <img src="{{ url_for('static', filename='silence-logo.png', v='2') }}" alt="SILENCE shushing emblem" />
     <span class="emblem-caption">S / H</span>
   </div>
   <a class="scroll-cue" href="#discover"><span></span> SCROLL TO EXPLORE</a>
@@ -61,7 +61,7 @@
     <div class="roster-preview-grid">
       {% for team in teams %}
       <a class="roster-preview-card" href="{{ url_for('views.teams') }}">
-        <img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" />
+        <img src="{{ url_for('static', filename='silence-logo.png', v='2') }}" alt="" />
         <span><small>{{ team.discipline }}</small><strong>{{ team.name }}</strong></span>
         <i aria-hidden="true">↗</i>
       </a>
@@ -71,7 +71,7 @@
 </section>
 
 <section class="home-last-call">
-  <img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" />
+  <img src="{{ url_for('static', filename='silence-logo.png', v='2') }}" alt="" />
   <div><p class="section-kicker">STAY IN THE LOOP</p><h2>THE NEXT ROUND STARTS HERE.</h2></div>
   <a class="button button-primary" href="{{ url_for('views.community') }}">JOIN SILENCE <span aria-hidden="true">↗</span></a>
 </section>

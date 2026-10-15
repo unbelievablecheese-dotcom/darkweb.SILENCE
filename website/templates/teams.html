@@ -19,7 +19,7 @@
     {% for team in teams %}
     <article class="team-card team-{{ team.color }}">
       <div class="team-card-top"><span>{{ team.tag }}</span><span class="team-live"><i></i> PROGRAM</span></div>
-      <div class="team-card-mark"><img src="{{ url_for('static', filename='silence-logo.png') }}" alt="" /><span>{{ team.mark }}</span></div>
+      <div class="team-card-mark"><img src="{{ url_for('static', filename='silence-logo.png', v='2') }}" alt="" /><span>{{ team.mark }}</span></div>
       <p class="team-discipline">{{ team.discipline }}</p>
       <h3>{{ team.name }}</h3>
       <p class="team-description">{{ team.description }}</p>
