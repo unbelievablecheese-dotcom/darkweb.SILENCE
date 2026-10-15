@@ -18,25 +18,46 @@
   <div class="merch-grid">
     <article class="merch-card">
       <div class="merch-art merch-tee" role="img" aria-label="Black SILENCE logo T-shirt concept">
-        <span class="merch-edition">SHHHH / 001</span><div class="garment garment-shirt"><img src="{{ url_for('static', filename='silence-logo.png', v='2') }}" alt="" /></div>
+        <span class="merch-edition">SHHHH / 001</span><div class="garment garment-shirt"><img class="merch-print" src="{{ url_for('static', filename='merch-core-print.svg') }}" alt="" /></div>
         <span class="merch-art-label">SILENCE CORE</span>
       </div>
       <div class="merch-details"><div><p>CORE COLLECTION</p><h3>SILENCE Logo Tee</h3></div><span>NOT FOR SALE</span></div>
     </article>
     <article class="merch-card">
       <div class="merch-art merch-hoodie" role="img" aria-label="Black SHHHH hoodie concept">
-        <span class="merch-edition">SHHHH / 002</span><div class="garment garment-hoodie"><span class="hood"></span><img src="{{ url_for('static', filename='silence-logo.png', v='2') }}" alt="" /></div>
+        <span class="merch-edition">SHHHH / 002</span><div class="garment garment-hoodie"><span class="hood"></span><img class="merch-print" src="{{ url_for('static', filename='merch-after-hours.svg') }}" alt="" /></div>
         <span class="merch-art-label">KEEP IT QUIET</span>
       </div>
       <div class="merch-details"><div><p>AFTER HOURS</p><h3>SHHHH Heavy Hoodie</h3></div><span>NOT FOR SALE</span></div>
     </article>
     <article class="merch-card">
       <div class="merch-art merch-cap" role="img" aria-label="Black SILENCE cap concept">
-        <span class="merch-edition">SHHHH / 003</span><div class="garment garment-cap"><img src="{{ url_for('static', filename='silence-logo.png', v='2') }}" alt="" /></div>
+        <span class="merch-edition">SHHHH / 003</span><div class="garment garment-cap"><img class="merch-print" src="{{ url_for('static', filename='merch-low-profile.svg') }}" alt="" /></div>
         <span class="merch-art-label">LOW PROFILE</span>
       </div>
       <div class="merch-details"><div><p>DAILY UNIFORM</p><h3>SILENCE Snapback</h3></div><span>NOT FOR SALE</span></div>
     </article>
+  </div>
+  <div class="merch-handoff">
+    <div class="section-heading">
+      <div><p class="section-kicker">PRODUCTION ART / DESIGNER HANDOFF</p><h2>PRINT <span>STUDIES.</span></h2></div>
+      <p class="section-aside">Original vector artwork files<br />ready for designer review.</p>
+    </div>
+    <div class="merch-handoff-grid">
+      <article>
+        <img src="{{ url_for('static', filename='merch-core-print.svg') }}" alt="SILENCE Core chest print artwork" />
+        <div><strong>001 / CORE TEE</strong><p>Front chest print · warm white and signal red · screen print or DTF · artwork: 260 × 300 viewBox.</p><a href="{{ url_for('static', filename='merch-core-print.svg') }}" download>DOWNLOAD SVG ↗</a></div>
+      </article>
+      <article>
+        <img src="{{ url_for('static', filename='merch-after-hours.svg') }}" alt="SILENCE After Hours hoodie back print artwork" />
+        <div><strong>002 / AFTER HOURS</strong><p>Oversized chest print · warm white, red and muted violet · screen print · artwork: 360 × 400 viewBox.</p><a href="{{ url_for('static', filename='merch-after-hours.svg') }}" download>DOWNLOAD SVG ↗</a></div>
+      </article>
+      <article>
+        <img src="{{ url_for('static', filename='merch-low-profile.svg') }}" alt="SILENCE Low Profile cap embroidery artwork" />
+        <div><strong>003 / LOW PROFILE</strong><p>Front-panel embroidery · two thread colors · simplify to satin-stitch paths with the embroidery vendor.</p><a href="{{ url_for('static', filename='merch-low-profile.svg') }}" download>DOWNLOAD SVG ↗</a></div>
+      </article>
+    </div>
+    <p class="merch-production-note">Concepts only — not for sale. A designer and manufacturer should confirm garment fit, print dimensions, thread limits, color matching, and production-ready separations before sampling.</p>
   </div>
   <div class="merch-notice"><span>///</span><p>These are visual concepts, not product listings. No orders can be placed yet. A real launch needs a connected store or print-on-demand provider, production-ready artwork, confirmed sizes and pricing, and shipping and returns details.</p></div>
 </section>

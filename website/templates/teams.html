@@ -28,7 +28,7 @@
         <div class="roster-list-heading"><strong>VLR-LISTED PLAYERS</strong><span>CHECKED {{ roster_checked }}</span></div>
         {% for player in player_roster %}
         <a href="{{ url_for('views.player_profile', slug=player.slug) }}">
-          <span>{{ player.name }}{% if player_profiles.get(player.slug) and player_profiles[player.slug].role %}<small> // {{ player_profiles[player.slug].role }}</small>{% endif %}</span>
+          <span>{{ player.name }}{% if player_profiles.get(player.slug) and player_profiles[player.slug].role %}<small> // {{ player_profiles[player.slug].role }}</small>{% else %}<small> // {{ player.agent_role }} (VLR agent data)</small>{% endif %}</span>
           <span aria-hidden="true">↗</span>
         </a>
         {% endfor %}

@@ -82,13 +82,59 @@ VLR_MATCHES = [
 VLR_MATCHES_CHECKED = "14 October 2026"
 
 PLAYER_ROSTER = [
-    {"slug": "flawed", "name": "Flawed", "url": "https://www.vlr.gg/player/66089/flawed"},
-    {"slug": "fizzy", "name": "Fizzy", "url": "https://www.vlr.gg/player/65294/fizzy"},
-    {"slug": "ghost", "name": "Ghost", "url": "https://www.vlr.gg/player/65296/ghost"},
-    {"slug": "doom", "name": "doom", "url": "https://www.vlr.gg/player/65295/doom"},
-    {"slug": "minikong", "name": "miniKong", "url": "https://www.vlr.gg/player/65297/minikong"},
+    {
+        "slug": "flawed",
+        "name": "Flawed",
+        "url": "https://www.vlr.gg/player/66089/flawed",
+        "agent_period": "all-time",
+        "agent_period_key": "all",
+        "agent_role": "Controller",
+        "agent_role_maps": 9,
+        "agents": [("Omen", 9, "100%")],
+    },
+    {
+        "slug": "fizzy",
+        "name": "Fizzy",
+        "url": "https://www.vlr.gg/player/65294/fizzy",
+        "agent_period": "all-time",
+        "agent_period_key": "all",
+        "agent_role": "Duelist",
+        "agent_role_maps": 15,
+        "agents": [("Chamber", 6, "24%"), ("Phoenix", 5, "20%"), ("Waylay", 4, "16%"), ("Jett", 3, "12%")],
+    },
+    {
+        "slug": "ghost",
+        "name": "Ghost",
+        "url": "https://www.vlr.gg/player/65296/ghost",
+        "agent_period": "all-time",
+        "agent_period_key": "all",
+        "agent_role": "Duelist",
+        "agent_role_maps": 14,
+        "agents": [("Jett", 6, "24%"), ("Omen", 5, "20%"), ("Iso", 3, "12%"), ("Phoenix", 3, "12%")],
+    },
+    {
+        "slug": "doom",
+        "name": "doom",
+        "url": "https://www.vlr.gg/player/65295/doom",
+        "agent_period": "all-time",
+        "agent_period_key": "all",
+        "agent_role": "Sentinel",
+        "agent_role_maps": 12,
+        "agents": [("Cypher", 8, "32%"), ("Reyna", 5, "20%"), ("Vyse", 3, "12%"), ("Jett", 3, "12%")],
+    },
+    {
+        "slug": "minikong",
+        "name": "miniKong",
+        "url": "https://www.vlr.gg/player/65297/minikong",
+        "agent_period": "all-time",
+        "agent_period_key": "all",
+        "agent_role": "Initiator",
+        "agent_role_maps": 20,
+        "agents": [("Sova", 10, "48%"), ("Fade", 8, "38%")],
+    },
 ]
 PLAYER_ROSTER_CHECKED = "14 October 2026"
+PLAYER_AGENT_STATS_CHECKED = "15 October 2026"
 APPLICATION_STATUSES = ("new", "reviewing", "shortlisted", "declined")
 
 
@@ -184,7 +230,13 @@ def player_profile(slug):
     if player is None:
         abort(404)
     profile = db.session.get(PlayerProfile, slug)
-    return render_template('player_profile.html', user=current_user, player=player, profile=profile)
+    return render_template(
+        'player_profile.html',
+        user=current_user,
+        player=player,
+        profile=profile,
+        agent_stats_checked=PLAYER_AGENT_STATS_CHECKED,
+    )
 
 
 @views.route('/matches')
@@ -433,8 +485,13 @@ def harvey_chat():
         return jsonify(error='H.A.R.V.E.Y. needs a GROQ_API_KEY environment variable to connect to GroqCloud.'), 503
 
     roster_context = '\n'.join(
-        f"- {player['name']} — current VLR-listed SILENCE roster. Public profile: {player['url']}. "
-        "PC specifications, in-game settings, and current rank are not verified in this site data."
+        f"- {player['name']} — VLR most-used agents ({player['agent_period']}): "
+        f"{', '.join(f'{agent} ({maps} maps, {pick_rate})' for agent, maps, pick_rate in player['agents'])}. "
+        f"Most-used agent class inferred by combining agent-map counts: {player['agent_role']} "
+        f"({player['agent_role_maps']} agent-map picks); the top individual agent can be a different class. "
+        "This is not a confirmed team assignment. "
+        f"Public profile: {player['url']}?timespan={player['agent_period_key']}. "
+        f"Stats checked {PLAYER_AGENT_STATS_CHECKED}. PC specifications, in-game settings, and current rank are not verified."
         for player in PLAYER_ROSTER
     )
     messages = [
@@ -446,6 +503,8 @@ def harvey_chat():
                 'You cannot access or modify website files, accounts, private notes, or deployments, '
                 'so never claim you have performed those actions. Do not request or reveal secrets. '
                 'When asked about a player, answer only from the roster information below. '
+                'Describe agent classes as inferred from the all-time VLR agent-map totals, not as confirmed team roles. '
+                'The most-used individual agent may differ from the most-used agent class. '
                 'Do not guess ranks, PC specifications, hardware, or in-game settings; say when details '
                 'are not listed and link to the public profile. Clarify that the roster was checked '
                 f'{PLAYER_ROSTER_CHECKED} and may change.\n\nVLR-listed SILENCE roster:\n{roster_context}'

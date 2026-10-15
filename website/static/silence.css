@@ -1309,6 +1309,27 @@ a {
   mix-blend-mode: screen;
 }
 
+.garment img.merch-print {
+  position: relative;
+  z-index: 2;
+  width: 76px;
+  height: 96px;
+  margin: 38px 0 0;
+  object-fit: contain;
+}
+
+.garment-hoodie img.merch-print {
+  width: 106px;
+  height: 104px;
+  margin: 48px 0 0;
+}
+
+.garment-cap img.merch-print {
+  width: 45px;
+  height: 45px;
+  margin: 29px 0 0;
+}
+
 .merch-details {
   display: flex;
   justify-content: space-between;
@@ -1331,6 +1352,65 @@ a {
   font-size: 7px;
   font-weight: 850;
   letter-spacing: 0.13em;
+}
+
+.merch-handoff {
+  margin-top: 68px;
+}
+
+.merch-handoff-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.merch-handoff-grid article {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid var(--silence-line);
+  background: #111116;
+}
+
+.merch-handoff-grid article > img {
+  width: 100%;
+  height: 132px;
+  padding: 8px;
+  background:
+    linear-gradient(45deg, #18171d 25%, transparent 25%),
+    linear-gradient(-45deg, #18171d 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #18171d 75%),
+    linear-gradient(-45deg, transparent 75%, #18171d 75%),
+    #121116;
+  background-size: 14px 14px;
+  object-fit: contain;
+}
+
+.merch-handoff-grid strong {
+  color: #f2eff3;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 15px;
+}
+
+.merch-handoff-grid p,
+.merch-production-note {
+  color: #aaa7b0;
+  font-size: 9px;
+  line-height: 1.7;
+}
+
+.merch-handoff-grid a {
+  color: #ff8097;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+}
+
+.merch-production-note {
+  margin: 16px 0 0;
 }
 
 .merch-disclaimer {
@@ -2086,6 +2166,61 @@ a {
 .player-profile-card {
   max-width: 700px;
   margin: 0 auto 20px;
+}
+
+.player-agent-snapshot {
+  max-width: 700px;
+  margin: 0 auto 20px;
+  padding: 22px;
+  border: 1px solid var(--silence-line);
+  background:
+    radial-gradient(ellipse at 100% 0, rgba(255, 54, 94, 0.09), transparent 45%),
+    #101016;
+}
+
+.player-agent-snapshot h3 {
+  margin: 5px 0 8px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 24px;
+}
+
+.agent-role-inference,
+.agent-source-note {
+  color: #aaa7b0;
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.agent-role-inference strong {
+  color: #ff8097;
+}
+
+.agent-usage-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.agent-usage-list p {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid var(--silence-line);
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 10px;
+}
+
+.agent-usage-list span {
+  color: #aaa7b0;
+  text-align: right;
+}
+
+.agent-source-note {
+  margin: 0 0 9px;
+  font-size: 9px;
 }
 
 .player-profile-disclaimer {
@@ -3503,6 +3638,14 @@ a {
 }
 
 @media (max-width: 640px) {
+  .merch-handoff-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .merch-handoff-grid article {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
   .join-application {
     margin-top: 39px;
     padding: 17px;

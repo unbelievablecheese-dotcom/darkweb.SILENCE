@@ -104,6 +104,15 @@ approve requests.
 - The **MATCHES** page shows that snapshot and coach-published upcoming games.
   Tournament standings and live results remain linked to VLR rather than being
   guessed or presented as an automatic live feed.
+- SILENCE player pages show all-time VLR agent-use snapshots and derive the
+  most-used VALORANT agent class by summing the maps played on each class's
+  agents. A player's leading individual agent can belong to a different class
+  than their most-used class. These inferences are not player-confirmed team
+  assignments; recheck each linked VLR profile before relying on the snapshot.
+- The merch page includes three original vector print studies with direct SVG
+  downloads for a designer. These are still concepts, not production approvals
+  or product listings; confirm sizing, color separations, materials, and
+  embroidery constraints with the designer and manufacturer.
 - Applicants receive a one-time private tracking code after submitting the
   questionnaire. They must save it to check review status later; it is stored
   as a hash and cannot be recovered if lost. Coaches update the status from

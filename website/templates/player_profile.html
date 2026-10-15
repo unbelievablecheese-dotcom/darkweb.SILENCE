@@ -30,6 +30,18 @@
       <strong>No role, rank, bio, social, settings, or PC specs have been published here yet.</strong>
     </div>
     {% endif %}
+    <section class="player-agent-snapshot" aria-labelledby="agent-snapshot-title">
+      <p class="section-kicker">VLR // AGENT USAGE</p>
+      <h3 id="agent-snapshot-title">MOST-USED AGENTS</h3>
+      <p class="agent-role-inference">Most-used agent class (inferred): <strong>{{ player.agent_role }}</strong> · {{ player.agent_role_maps }} agent-map picks</p>
+      <div class="agent-usage-list">
+        {% for agent, maps, pick_rate in player.agents %}
+        <p><strong>{{ agent }}</strong><span>{{ maps }} maps · {{ pick_rate }}</span></p>
+        {% endfor %}
+      </div>
+      <p class="agent-source-note">VLR {{ player.agent_period }} usage, checked {{ agent_stats_checked }}. Agent class is inferred from agent picks and is not a confirmed team assignment.</p>
+      <a class="team-vlr-link" href="{{ player.url }}?timespan={{ player.agent_period_key }}" target="_blank" rel="noopener noreferrer">VERIFY ON VLR ↗</a>
+    </section>
     <a class="button button-primary" href="{{ player.url }}" target="_blank" rel="noopener noreferrer">OPEN PUBLIC VLR PROFILE ↗</a>
   </article>
   <a class="team-vlr-link" href="{{ url_for('views.teams') }}#silence-roster">← BACK TO THE SILENCE ROSTER</a>
