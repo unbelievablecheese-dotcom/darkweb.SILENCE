@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}COACH REQUEST // SILENCE{% endblock %}
+{% block content %}
+<section class="auth-card coach-status-card">
+  <p class="section-kicker">SILENCE // COACH ACCESS</p>
+  {% if coach_request.status == 'approved' %}
+  <h1>ACCESS APPROVED.</h1>
+  <p class="auth-description">Your account is now approved for coach tools.</p>
+  <a class="auth-submit coach-status-link" href="{{ url_for('views.coach_applications') }}">OPEN COACH REVIEW</a>
+  {% elif coach_request.status == 'pending' %}
+  <h1>REQUEST PENDING.</h1>
+  <p class="auth-description">Your account is not a coach account yet. The owner must approve the request using the link sent to the owner’s email.</p>
+  <p class="coach-request-email">REQUESTED BY {{ coach_request.user.email }}</p>
+  {% if mail_ready %}
+  <form method="post" action="{{ url_for('coach.resend_request_email') }}">
+    <button class="auth-submit" type="submit">RESEND APPROVAL EMAIL</button>
+  </form>
+  {% else %}
+  <p class="coach-signup-unavailable">The approval email service needs to be configured before a request can be sent.</p>
+  {% endif %}
+  {% else %}
+  <h1>REQUEST CLOSED.</h1>
+  <p class="auth-description">This coach request is no longer pending. Contact the site owner if you think this is a mistake.</p>
+  {% endif %}
+  <p class="auth-switch"><a href="{{ url_for('views.home') }}">RETURN TO SILENCE</a></p>
+</section>
+{% endblock %}

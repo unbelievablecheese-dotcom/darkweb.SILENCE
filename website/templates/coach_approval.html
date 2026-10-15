@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}COACH APPROVAL // SILENCE{% endblock %}
+{% block content %}
+<section class="auth-card coach-status-card">
+  <p class="section-kicker">SILENCE // OWNER APPROVAL</p>
+  {% if coach_request %}
+    {% if coach_request.status == 'approved' %}
+    <h1>COACH APPROVED.</h1>
+    <p class="auth-description">{{ coach_request.user.first_name }} ({{ coach_request.user.email }}) can now access coach tools.</p>
+    {% else %}
+    <h1>APPROVE COACH?</h1>
+    <p class="auth-description">This grants this account access to the private coach applications dashboard and submitted player questionnaires.</p>
+    <div class="coach-approval-identity"><strong>{{ coach_request.user.first_name }}</strong><span>{{ coach_request.user.email }}</span><small>Requested {{ coach_request.submitted_at.strftime('%Y-%m-%d %H:%M UTC') }}</small></div>
+    <form method="post">
+      <button class="auth-submit" type="submit">APPROVE COACH</button>
+    </form>
+    {% endif %}
+  {% else %}
+  <h1>LINK EXPIRED.</h1>
+  <p class="auth-description">This approval link is invalid, expired, or has already been used. Ask the applicant to resend the request.</p>
+  {% endif %}
+</section>
+{% endblock %}

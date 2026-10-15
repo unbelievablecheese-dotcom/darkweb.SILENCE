@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}COACH REVIEW // SILENCE{% endblock %}
+{% block content %}
+<section class="inner-hero">
+  <div class="inner-hero-copy">
+    <p class="hero-kicker"><span></span> SILENCE // PRIVATE STAFF AREA</p>
+    <h1>PLAYER <em>APPLICATIONS.</em></h1>
+    <p>Review submitted player questionnaires and filter by rank, role, and review status.</p>
+  </div>
+  <span class="inner-hero-index">STAFF / APPLICATIONS</span>
+</section>
+<section class="content-section page-section coach-workspace">
+  <div class="section-topline"><span>COACH / MANAGER REVIEW</span><span>{{ applications|length }} RESULTS</span></div>
+  <form class="coach-filters" method="get" action="{{ url_for('views.coach_applications') }}">
+    <label>ROLE<input type="search" name="role" value="{{ filters.role }}" placeholder="e.g. Controller" /></label>
+    <label>RANK<input type="search" name="rank" value="{{ filters.rank }}" placeholder="e.g. Ascendant" /></label>
+    <label>STATUS
+      <select name="status">
+        <option value="">ALL STATUSES</option>
+        {% for status in statuses %}
+        <option value="{{ status }}" {% if filters.status == status %}selected{% endif %}>{{ status|upper }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <button class="button button-primary" type="submit">FILTER</button>
+    <a class="button button-ghost" href="{{ url_for('views.coach_applications_csv', role=filters.role, rank=filters.rank, status=filters.status) }}">EXPORT CSV ↓</a>
+  </form>
+  {% if applications %}
+  <div class="coach-applications">
+    {% for application in applications %}
+    <article class="coach-application">
+      <header>
+        <div><p>{{ application.game }} // {{ application.region }}</p><h2>{{ application.name }}</h2></div>
+        <time datetime="{{ application.submitted_at.isoformat() }}">{{ application.submitted_at.strftime('%Y-%m-%d %H:%M UTC') }}</time>
+      </header>
+      <div class="coach-application-summary">
+        <p><strong>ROLE</strong>{{ application.role }}</p>
+        <p><strong>RANK</strong>{{ application.rank }}</p>
+        <p><strong>EMAIL</strong><a href="mailto:{{ application.email }}">{{ application.email }}</a></p>
+        <p><strong>AVAILABILITY</strong>{{ application.availability }}</p>
+      </div>
+      <details>
+        <summary>EXPERIENCE, PROFILE LINKS & MOTIVATION</summary>
+        <div class="coach-application-details">
+          <p><strong>Competitive experience</strong>{{ application.experience }}</p>
+          <p><strong>Profile / VOD links</strong>{{ application.profile }}</p>
+          <p><strong>Why SILENCE</strong>{{ application.motivation }}</p>
+        </div>
+      </details>
+      <form class="coach-status-form" method="post" action="{{ url_for('views.update_application_status', application_id=application.id) }}">
+        <label for="status-{{ application.id }}">REVIEW STATUS</label>
+        <select id="status-{{ application.id }}" name="status">
+          {% for status in statuses %}
+          <option value="{{ status }}" {% if application.status == status %}selected{% endif %}>{{ status|upper }}</option>
+          {% endfor %}
+        </select>
+        <button class="button button-ghost" type="submit">SAVE STATUS</button>
+      </form>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="coach-empty"><h2>NO MATCHING APPLICATIONS.</h2><p>New submissions matching these filters will appear here.</p></div>
+  {% endif %}
+  <p class="coach-privacy-note">Applications contain personal information. Keep access limited to trusted staff, export only when necessary, and remove records when no longer needed.</p>
+</section>
+{% endblock %}
