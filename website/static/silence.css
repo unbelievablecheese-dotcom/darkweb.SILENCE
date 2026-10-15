@@ -2437,6 +2437,11 @@ a {
 }
 
 @media (max-width: 640px) {
+  .auth-card {
+    margin: 44px auto 76px;
+    padding: 22px;
+  }
+
   .silence-radio {
     right: 12px;
     bottom: 78px;
