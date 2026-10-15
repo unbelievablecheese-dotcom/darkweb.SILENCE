@@ -8,6 +8,7 @@
   const input = document.getElementById("harvey-input");
   const micButton = document.getElementById("harvey-mic");
   const voiceButton = document.getElementById("harvey-voice");
+  const voiceSelect = document.getElementById("harvey-voice-select");
 
   if (
     !toggle ||
@@ -18,7 +19,8 @@
     !form ||
     !input ||
     !micButton ||
-    !voiceButton
+    !voiceButton ||
+    !voiceSelect
   ) {
     return;
   }
@@ -27,17 +29,71 @@
     window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognition = null;
   let voiceRepliesEnabled = false;
+  const voiceStorageKey = "silence.harvey.voice";
+  let preferredVoiceURI = "";
+
+  try {
+    preferredVoiceURI = window.localStorage.getItem(voiceStorageKey) || "";
+  } catch (error) {
+    console.warn("Could not read the saved H.A.R.V.E.Y. voice preference:", error);
+  }
+
+  function voiceQualityScore(voice) {
+    const name = voice.name.toLowerCase();
+    let score = voice.lang.toLowerCase().startsWith("en-gb") ? 20 : 0;
+    if (/natural|neural|online/.test(name)) score += 60;
+    if (/google|microsoft|aria|sonia|libby|ryan|daniel|oliver/.test(name)) score += 25;
+    if (/female|male/.test(name)) score += 5;
+    if (voice.localService) score += 2;
+    return score;
+  }
 
   function getAssistantVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    const selectedVoice = voices.find((voice) => voice.voiceURI === preferredVoiceURI);
+    if (selectedVoice) return selectedVoice;
+
+    return voices
+      .filter((voice) => voice.lang.toLowerCase().startsWith("en"))
+      .sort((first, second) => voiceQualityScore(second) - voiceQualityScore(first))[0]
+      || null;
+  }
+
+  function loadVoices() {
+    if (!("speechSynthesis" in window)) {
+      voiceSelect.disabled = true;
+      return;
+    }
+
     const voices = window.speechSynthesis.getVoices();
     const englishVoices = voices.filter((voice) =>
       voice.lang.toLowerCase().startsWith("en")
     );
-    const britishVoice = englishVoices.find((voice) =>
-      voice.lang.toLowerCase().startsWith("en-gb")
-    );
+    const availableVoices = englishVoices.length ? englishVoices : voices;
+    const currentVoiceURI = voiceSelect.value || preferredVoiceURI;
+    voiceSelect.replaceChildren();
 
-    return britishVoice || englishVoices[0] || voices[0] || null;
+    const automaticOption = document.createElement("option");
+    automaticOption.value = "";
+    automaticOption.textContent = "Natural English voice";
+    voiceSelect.append(automaticOption);
+
+    availableVoices
+      .sort((first, second) => voiceQualityScore(second) - voiceQualityScore(first))
+      .forEach((voice) => {
+        const option = document.createElement("option");
+        option.value = voice.voiceURI;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        voiceSelect.append(option);
+      });
+
+    voiceSelect.disabled = availableVoices.length === 0;
+    if (availableVoices.some((voice) => voice.voiceURI === currentVoiceURI)) {
+      voiceSelect.value = currentVoiceURI;
+    } else {
+      preferredVoiceURI = "";
+      voiceSelect.value = "";
+    }
   }
 
   function setStatus(message) {
@@ -58,15 +114,32 @@
     }
 
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(message);
+    const speechText = message
+      .replace(/https?:\/\/\S+/gi, "the linked page")
+      .replace(/```[\s\S]*?```/g, " code example omitted ")
+      .replace(/[`*_#>]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!speechText) return;
+
+    const utterance = new SpeechSynthesisUtterance(speechText);
     utterance.lang = "en-GB";
-    utterance.rate = 0.95;
-    utterance.pitch = 1;
+    utterance.rate = 0.92;
+    utterance.pitch = 1.02;
     const assistantVoice = getAssistantVoice();
     if (assistantVoice) {
       utterance.voice = assistantVoice;
       utterance.lang = assistantVoice.lang;
     }
+    utterance.onstart = () => setStatus("Speaking");
+    utterance.onend = () => {
+      if (voiceRepliesEnabled) setStatus("Ready when you are");
+    };
+    utterance.onerror = (event) => {
+      if (event.error === "canceled" || event.error === "interrupted") return;
+      console.warn("H.A.R.V.E.Y. voice playback failed:", event.error);
+      setStatus("Voice playback unavailable");
+    };
     window.speechSynthesis.speak(utterance);
   }
 
@@ -313,6 +386,27 @@
       setStatus("Voice replies disabled");
     }
   });
+
+  voiceSelect.addEventListener("change", () => {
+    preferredVoiceURI = voiceSelect.value;
+    try {
+      if (preferredVoiceURI) {
+        window.localStorage.setItem(voiceStorageKey, preferredVoiceURI);
+      } else {
+        window.localStorage.removeItem(voiceStorageKey);
+      }
+    } catch (error) {
+      console.warn("Could not save the H.A.R.V.E.Y. voice preference:", error);
+    }
+  });
+
+  if ("speechSynthesis" in window) {
+    loadVoices();
+    window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
+  } else {
+    voiceSelect.disabled = true;
+    voiceSelect.title = "Voice replies aren’t supported by this browser.";
+  }
 
   if (!SpeechRecognition) {
     micButton.disabled = true;

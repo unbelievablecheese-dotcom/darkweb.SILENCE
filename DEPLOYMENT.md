@@ -97,3 +97,10 @@ is single-use, and link previews do not approve requests.
   the site. Playback starts only after a visitor chooses the button; browser
   settings or the video's embedding availability may require pressing Play in
   the YouTube controls.
+
+  - H.A.R.V.E.Y.'s optional voice replies use the visitor's built-in browser
+    speech voices. The voice menu lets each visitor choose an installed English
+    voice, remembers that preference in their browser, and uses a slightly
+    slower speaking pace. Voice options and how natural they sound depend on
+    the visitor's browser and operating system; install a higher-quality English
+    voice in the device settings for more natural playback.

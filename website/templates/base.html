@@ -21,7 +21,7 @@
       html, body { min-height: 100%; margin: 0; background: #09090d; color: #f4f2f2; }
     </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='silence.css', v='9') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='harvey.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='harvey.css', v='2') }}" />
   </head>
   <body id="top">
     <header class="silence-header">
@@ -83,6 +83,10 @@
         <div class="harvey-tools">
           <button id="harvey-mic" class="harvey-tool-button" type="button"><i class="fa fa-microphone" aria-hidden="true"></i><span>Speak</span></button>
           <button id="harvey-voice" class="harvey-tool-button" type="button" aria-pressed="false"><i class="fa fa-volume-up" aria-hidden="true"></i><span>Voice replies off</span></button>
+          <label class="sr-only" for="harvey-voice-select">Choose H.A.R.V.E.Y.’s voice</label>
+          <select id="harvey-voice-select" class="harvey-voice-select" aria-label="Choose H.A.R.V.E.Y.’s voice">
+            <option value="">Natural English voice</option>
+          </select>
         </div>
         <form id="harvey-form" class="harvey-form">
           <label class="sr-only" for="harvey-input">Message H.A.R.V.E.Y.</label>
@@ -104,6 +108,6 @@
     </footer>
     <script src="{{ url_for('static', filename='index.js') }}"></script>
     <script src="{{ url_for('static', filename='silence.js') }}" defer></script>
-    <script src="{{ url_for('static', filename='harvey.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='harvey.js', v='2') }}" defer></script>
   </body>
 </html>
