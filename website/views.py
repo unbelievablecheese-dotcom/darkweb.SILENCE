@@ -1,11 +1,13 @@
+import csv
+import io
 import os
 
 import httpx
-from flask import Blueprint, Response, current_app, flash, jsonify, redirect, render_template, request, url_for
+from flask import Blueprint, Response, abort, current_app, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from . import db
-from .models import Note
+from .models import Note, PlayerApplication
 
 views = Blueprint('views', __name__)
 
@@ -76,6 +78,30 @@ VLR_MATCHES = [
 ]
 VLR_MATCHES_CHECKED = "14 October 2026"
 
+PLAYER_ROSTER = [
+    {"name": "Flawed", "url": "https://www.vlr.gg/player/66089/flawed"},
+    {"name": "Fizzy", "url": "https://www.vlr.gg/player/65294/fizzy"},
+    {"name": "Ghost", "url": "https://www.vlr.gg/player/65296/ghost"},
+    {"name": "doom", "url": "https://www.vlr.gg/player/65295/doom"},
+    {"name": "miniKong", "url": "https://www.vlr.gg/player/65297/minikong"},
+]
+PLAYER_ROSTER_CHECKED = "14 October 2026"
+APPLICATION_STATUSES = ("new", "reviewing", "shortlisted", "declined")
+
+
+def configured_coach_emails():
+    return {
+        email.strip().lower()
+        for email in os.environ.get("COACH_EMAILS", "").split(",")
+        if email.strip()
+    }
+
+
+def is_coach(user):
+    if not user or not getattr(user, "is_authenticated", False):
+        return False
+    return user.email.lower() in configured_coach_emails()
+
 
 def summarize_match_record(matches):
     wins = sum(match["result"] == "win" for match in matches)
@@ -117,7 +143,13 @@ def home():
 
 @views.route('/teams')
 def teams():
-    return render_template('teams.html', user=current_user, teams=TEAMS)
+    return render_template(
+        'teams.html',
+        user=current_user,
+        teams=TEAMS,
+        player_roster=PLAYER_ROSTER,
+        roster_checked=PLAYER_ROSTER_CHECKED,
+    )
 
 
 @views.route('/merch')
@@ -139,11 +171,17 @@ def community():
         matches=VLR_MATCHES,
         record=record,
         matches_checked=VLR_MATCHES_CHECKED,
+        is_coach=is_coach,
+        applications_enabled=bool(configured_coach_emails()),
     )
 
 
 @views.route('/join-silence/application', methods=['POST'])
 def join_application():
+    if not configured_coach_emails():
+        flash('Player applications are not open until SILENCE staff access is configured.', category='error')
+        return redirect(url_for('views.community') + '#join-silence')
+
     fields = (
         ('name', 'Name / gamer tag', 100),
         ('email', 'Contact email', 254),
@@ -179,15 +217,93 @@ def join_application():
         flash('Enter a valid contact email.', category='error')
         return redirect(url_for('views.community') + '#join-silence')
 
-    application_text = '\n'.join(
-        ['SILENCE // ESPORTS PLAYER APPLICATION', '=' * 38, '']
-        + [f'{label}: {answers[key]}' for key, label, _ in fields]
-        + ['', 'Prepared on this device. This application was not sent to SILENCE.']
+    if request.form.get('consent') != 'yes':
+        flash('Please confirm that SILENCE may store your application for coach review.', category='error')
+        return redirect(url_for('views.community') + '#join-silence')
+
+    application = PlayerApplication()
+    for key, value in answers.items():
+        setattr(application, key, value)
+    db.session.add(application)
+    db.session.commit()
+    flash('Your player questionnaire was submitted for coach review.', category='success')
+    return redirect(url_for('views.community') + '#join-silence')
+
+
+def filtered_applications():
+    statement = db.select(PlayerApplication)
+    role = request.args.get('role', '').strip()[:100]
+    rank = request.args.get('rank', '').strip()[:100]
+    status = request.args.get('status', '').strip()
+    if role:
+        statement = statement.where(PlayerApplication.role.ilike(f'%{role}%'))
+    if rank:
+        statement = statement.where(PlayerApplication.rank.ilike(f'%{rank}%'))
+    if status in APPLICATION_STATUSES:
+        statement = statement.where(PlayerApplication.status == status)
+    statement = statement.order_by(PlayerApplication.submitted_at.desc())
+    return statement, {
+        'role': role,
+        'rank': rank,
+        'status': status if status in APPLICATION_STATUSES else '',
+    }
+
+
+@views.route('/coach/applications')
+@login_required
+def coach_applications():
+    if not is_coach(current_user):
+        abort(403)
+    query, filters = filtered_applications()
+    return render_template(
+        'coach_applications.html',
+        user=current_user,
+        applications=db.session.scalars(query).all(),
+        statuses=APPLICATION_STATUSES,
+        filters=filters,
     )
-    response = Response(application_text, mimetype='text/plain; charset=utf-8')
-    response.headers['Content-Disposition'] = 'attachment; filename="silence-player-application.txt"'
+
+
+@views.route('/coach/applications.csv')
+@login_required
+def coach_applications_csv():
+    if not is_coach(current_user):
+        abort(403)
+    query, _ = filtered_applications()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    fields = (
+        'id', 'submitted_at', 'name', 'email', 'game', 'role', 'rank',
+        'region', 'experience', 'availability', 'profile', 'motivation', 'status',
+    )
+    writer.writerow(fields)
+    for application in db.session.scalars(query).all():
+        row = [getattr(application, field) for field in fields]
+        writer.writerow([
+            f"'{value}" if isinstance(value, str) and value.startswith(('=', '+', '-', '@')) else value
+            for value in row
+        ])
+    response = Response('\ufeff' + output.getvalue(), mimetype='text/csv; charset=utf-8')
+    response.headers['Content-Disposition'] = 'attachment; filename="silence-player-applications.csv"'
     response.headers['Cache-Control'] = 'no-store'
     return response
+
+
+@views.route('/coach/applications/<int:application_id>/status', methods=['POST'])
+@login_required
+def update_application_status(application_id):
+    if not is_coach(current_user):
+        abort(403)
+    status = request.form.get('status', '')
+    if status not in APPLICATION_STATUSES:
+        abort(400)
+    application = db.session.get(PlayerApplication, application_id)
+    if application is None:
+        abort(404)
+    application.status = status
+    db.session.commit()
+    flash('Application status updated.', category='success')
+    return redirect(url_for('views.coach_applications'))
 
 
 @views.route('/notes', methods=['GET', 'POST'])
@@ -238,6 +354,11 @@ def harvey_chat():
     if not api_key:
         return jsonify(error='H.A.R.V.E.Y. needs a GROQ_API_KEY environment variable to connect to GroqCloud.'), 503
 
+    roster_context = '\n'.join(
+        f"- {player['name']} — current VLR-listed SILENCE roster. Public profile: {player['url']}. "
+        "PC specifications, in-game settings, and current rank are not verified in this site data."
+        for player in PLAYER_ROSTER
+    )
     messages = [
         {
             'role': 'system',
@@ -245,7 +366,11 @@ def harvey_chat():
                 'You are H.A.R.V.E.Y., a polite, concise assistant on SILENCE, an esports community website. '
                 'Help with general questions, gaming and esports topics, and navigating the site. '
                 'You cannot access or modify website files, accounts, private notes, or deployments, '
-                'so never claim you have performed those actions. Do not request or reveal secrets.'
+                'so never claim you have performed those actions. Do not request or reveal secrets. '
+                'When asked about a player, answer only from the roster information below. '
+                'Do not guess ranks, PC specifications, hardware, or in-game settings; say when details '
+                'are not listed and link to the public profile. Clarify that the roster was checked '
+                f'{PLAYER_ROSTER_CHECKED} and may change.\n\nVLR-listed SILENCE roster:\n{roster_context}'
             ),
         },
         {'role': 'user', 'content': message.strip()},

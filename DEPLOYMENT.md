@@ -36,3 +36,19 @@ configured as private Render environment variables as well.
 3. Save the setting and redeploy the service. H.A.R.V.E.Y. uses
    `openai/gpt-oss-120b` by default. To select a different model available
    to your Groq account, set `GROQ_MODEL` to its exact model ID.
+
+## Coach access and player applications
+
+1. Create an account for each trusted coach or manager on the website.
+2. In Render's web-service **Environment** settings, set `COACH_EMAILS` to a
+   comma-separated list of those accounts' email addresses, for example
+   `coach@example.com,manager@example.com`. Save and redeploy. Only signed-in
+   accounts whose email appears in this setting can open `/coach/applications`.
+3. Player submissions are stored in the app's configured database. Coaches can
+   filter by role, rank, and status, update review status, and export filtered
+   applications to CSV for import into a spreadsheet. The app does not email or
+   sync submissions to Google Sheets automatically.
+4. Applicants must consent before submission. Treat the dashboard and CSV as
+   sensitive personal data; limit staff access and remove records when no
+   longer needed. Use a persistent database such as Neon in production so
+   submissions survive service restarts.

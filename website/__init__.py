@@ -46,11 +46,12 @@ def create_app(test_config=None):
             ), 401
         return redirect(url_for(login_manager.login_view, next=request.full_path))
 
-    from .views import views
+    from .views import is_coach, views
     from .auth import auth
 
     app.register_blueprint(views)
     app.register_blueprint(auth)
+    app.jinja_env.globals['is_coach'] = is_coach
 
     from .models import User
 

@@ -31,8 +31,13 @@
   <section id="join-silence" class="join-application" aria-labelledby="join-silence-title">
     <div class="join-application-heading">
       <div><p class="section-kicker">PLAYER INTEREST // ESPORTS</p><h2 id="join-silence-title">YOUR <span>PLAYER PROFILE.</span></h2></div>
-      <p>Answer a few questions to prepare an esports application. The web server receives your answers to generate the download, but SILENCE does not save or email them.</p>
+      {% if applications_enabled %}
+      <p>Coaches can review submitted applications and filter by role, rank, or status. We store your answers in SILENCE’s database; only accounts listed for coaches/managers can see them.</p>
+      {% else %}
+      <p>Player applications will open once SILENCE staff accounts are configured. This form is not accepting submissions yet.</p>
+      {% endif %}
     </div>
+    {% if applications_enabled %}
     <form class="join-application-form" method="post" action="{{ url_for('views.join_application') }}">
       <label>NAME / GAMER TAG<input name="name" maxlength="100" autocomplete="nickname" required /></label>
       <label>CONTACT EMAIL<input name="email" type="email" maxlength="254" autocomplete="email" required /></label>
@@ -44,11 +49,16 @@
       <label class="join-application-wide">PRACTICE AVAILABILITY<textarea name="availability" maxlength="500" rows="2" placeholder="Days, times, and time zone" required></textarea></label>
       <label class="join-application-wide">TRACKER, PROFILE, OR VOD LINKS<textarea name="profile" maxlength="500" rows="2" placeholder="Paste public links only; do not include passwords or private information" required></textarea></label>
       <label class="join-application-wide">WHY DO YOU WANT TO JOIN SILENCE?<textarea name="motivation" maxlength="1200" rows="3" placeholder="Tell us about your goals, teamwork, and what you bring to a roster" required></textarea></label>
+      <label class="join-application-consent join-application-wide">
+        <input name="consent" type="checkbox" value="yes" required />
+        I agree that SILENCE may store this application so authorized coaches/managers can review it.
+      </label>
       <div class="join-application-submit">
-        <button class="button button-primary" type="submit">DOWNLOAD YOUR APPLICATION <span aria-hidden="true">↓</span></button>
-        <span>This downloads a text file. It does not submit an application or save your answers.</span>
+        <button class="button button-primary" type="submit">SUBMIT PLAYER QUESTIONNAIRE <span aria-hidden="true">↗</span></button>
+        <span>Submit only information you are comfortable sharing with the SILENCE coaching staff.</span>
       </div>
     </form>
+    {% endif %}
   </section>
   <section class="team-record" aria-labelledby="team-record-title">
     <div class="team-record-heading">

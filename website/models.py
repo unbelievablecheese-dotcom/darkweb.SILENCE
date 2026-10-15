@@ -11,6 +11,22 @@ class Note(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
+class PlayerApplication(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    submitted_at = db.Column(db.DateTime(timezone=True), nullable=False, default=func.now())
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(254), nullable=False)
+    game = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(100), nullable=False, index=True)
+    rank = db.Column(db.String(100), nullable=False, index=True)
+    region = db.Column(db.String(100), nullable=False)
+    experience = db.Column(db.String(1200), nullable=False)
+    availability = db.Column(db.String(500), nullable=False)
+    profile = db.Column(db.String(500), nullable=False)
+    motivation = db.Column(db.String(1200), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='new', index=True)
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False, index=True)

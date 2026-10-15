@@ -23,6 +23,15 @@
       <p class="team-discipline">{{ team.discipline }}</p>
       <h3>{{ team.name }}</h3>
       <p class="team-description">{{ team.description }}</p>
+      {% if team.name == 'SILENCE' %}
+      <div id="silence-roster" class="roster-list">
+        <div class="roster-list-heading"><strong>VLR-LISTED PLAYERS</strong><span>CHECKED {{ roster_checked }}</span></div>
+        {% for player in player_roster %}
+        <a href="{{ player.url }}" target="_blank" rel="noopener noreferrer">{{ player.name }} <span aria-hidden="true">↗</span></a>
+        {% endfor %}
+        <p>Player profile, rank, PC specs, and settings may not be published or current. Check with the player for verified details.</p>
+      </div>
+      {% endif %}
       <span class="team-link">ROSTER ANNOUNCEMENTS <span aria-hidden="true">↗</span></span>
     </article>
     {% endfor %}
@@ -32,5 +41,6 @@
   <p class="section-kicker">THE NEXT ROUND STARTS TOGETHER</p>
   <h2>READY TO <span>CONNECT?</span></h2>
   <a class="button button-primary" href="{{ url_for('views.community') }}#join-silence">JOIN SILENCE <span aria-hidden="true">↗</span></a>
+  <a class="team-vlr-link" href="https://www.vlr.gg/team/22912/silence" target="_blank" rel="noopener noreferrer">SILENCE ON VLR ↗</a>
 </section>
 {% endblock %}
