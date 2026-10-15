@@ -92,11 +92,12 @@ is single-use, and link previews do not approve requests.
   questionnaire. They must save it to check review status later; it is stored
   as a hash and cannot be recovered if lost. Coaches update the status from
   **COACH REVIEW**.
-- The optional **SILENCE RADIO** button opens the YouTube video in a reusable
-  separate window, set to loop, so it can continue while visitors navigate
-  the site. Playback starts only after a visitor chooses the button; browser
-  settings or the video's embedding availability may require pressing Play in
-  the YouTube controls.
+- The optional **SILENCE RADIO** button opens the YouTube embed inline on the
+  current page and requests looping playback. YouTube controls and video remain
+  visible; use a properly licensed audio file if true audio-only playback is
+  required. Playback starts only after a visitor chooses the button, and
+  browser settings or the video's embedding availability may still require
+  pressing Play in YouTube's controls.
 
   - H.A.R.V.E.Y.'s optional voice replies use the visitor's built-in browser
     speech voices. The voice menu lets each visitor choose an installed English

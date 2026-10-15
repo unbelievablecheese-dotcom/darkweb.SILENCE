@@ -20,7 +20,7 @@
     <style>
       html, body { min-height: 100%; margin: 0; background: #09090d; color: #f4f2f2; }
     </style>
-    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css', v='9') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css', v='10') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='harvey.css', v='2') }}" />
   </head>
   <body id="top">
@@ -97,9 +97,19 @@
       </div>
     </section>
 
-    <a class="silence-radio" href="{{ url_for('views.radio') }}" target="silence-radio" aria-label="Open the looping SILENCE music player in a separate window">
-      <span aria-hidden="true">♫</span> SILENCE RADIO <span class="radio-toggle-state">PLAY ↗</span>
-    </a>
+    <section class="silence-radio" aria-label="Optional SILENCE music player">
+      <div id="silence-radio-panel" class="silence-radio-panel" hidden>
+        <div class="silence-radio-heading">
+          <span>YOUTUBE // LOOP ENABLED</span>
+          <button id="silence-radio-close" type="button" aria-label="Close music player">&times;</button>
+        </div>
+        <div id="silence-radio-frame"></div>
+        <p>Sound plays from the YouTube player. Its video and controls remain visible.</p>
+      </div>
+      <button id="silence-radio-toggle" type="button" aria-expanded="false" aria-controls="silence-radio-panel">
+        <span aria-hidden="true">♫</span> SILENCE RADIO <span class="radio-toggle-state">PLAY</span>
+      </button>
+    </section>
 
     <footer class="silence-footer">
       <a class="footer-brand" href="{{ url_for('views.home') }}">SILENCE <span>// SHHHH</span></a>
@@ -109,5 +119,6 @@
     <script src="{{ url_for('static', filename='index.js') }}"></script>
     <script src="{{ url_for('static', filename='silence.js') }}" defer></script>
     <script src="{{ url_for('static', filename='harvey.js', v='2') }}" defer></script>
+    <script src="{{ url_for('static', filename='silence-radio.js', v='1') }}" defer></script>
   </body>
 </html>

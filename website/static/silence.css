@@ -1859,9 +1859,13 @@ a {
   position: fixed;
   z-index: 120;
   right: 24px;
-  bottom: 24px;
+  bottom: 88px;
   width: min(300px, calc(100vw - 34px));
+}
+
+.silence-radio > button {
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
   padding: 12px 14px;
@@ -1872,21 +1876,67 @@ a {
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.12em;
-  text-decoration: none;
+  cursor: pointer;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
 }
 
-.silence-radio > span:first-child {
+.silence-radio > button > span:first-child {
   color: var(--silence-red);
   font-size: 16px;
 }
 
-.silence-radio:hover {
+.silence-radio > button:hover {
   border-color: var(--silence-red);
 }
 
 .radio-toggle-state {
   color: #a5a2ab;
+}
+
+.silence-radio-panel {
+  margin-bottom: 8px;
+  padding: 12px;
+  border: 1px solid var(--silence-line);
+  background: #101016;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+}
+
+.silence-radio-panel[hidden] {
+  display: none;
+}
+
+.silence-radio-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 9px;
+  color: #d7d4dc;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.silence-radio-heading button {
+  border: 0;
+  background: transparent;
+  color: #f5f3f5;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.silence-radio-panel > p {
+  margin: 9px 0 0;
+  color: #aaa7b0;
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+#silence-radio-frame iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  background: #050507;
 }
 
 .radio-video iframe {
@@ -2254,7 +2304,7 @@ a {
 @media (max-width: 640px) {
   .silence-radio {
     right: 12px;
-    bottom: 12px;
+    bottom: 78px;
   }
 
   .community-links,
