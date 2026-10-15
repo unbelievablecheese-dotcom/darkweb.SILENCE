@@ -20,7 +20,7 @@
     <style>
       html, body { min-height: 100%; margin: 0; background: #09090d; color: #f4f2f2; }
     </style>
-    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css', v='8') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='silence.css', v='9') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='harvey.css') }}" />
   </head>
   <body id="top">
@@ -35,13 +35,15 @@
       <nav class="silence-nav" id="main-nav" aria-label="Main navigation">
         <a class="{{ 'active' if request.endpoint == 'views.home' else '' }}" href="{{ url_for('views.home') }}">HOME</a>
         <a class="{{ 'active' if request.endpoint == 'views.teams' else '' }}" href="{{ url_for('views.teams') }}">TEAMS</a>
+        <a class="{{ 'active' if request.endpoint == 'views.matches_page' else '' }}" href="{{ url_for('views.matches_page') }}">MATCHES</a>
         <a class="{{ 'active' if request.endpoint == 'views.merch' else '' }}" href="{{ url_for('views.merch') }}">MERCH</a>
-        <a class="{{ 'active' if request.endpoint == 'views.content' else '' }}" href="{{ url_for('views.content') }}">CONTENT</a>
+        <a class="{{ 'active' if request.endpoint == 'views.content' else '' }}" href="{{ url_for('views.content') }}">NEWS</a>
         <a class="{{ 'active' if request.endpoint == 'views.community' else '' }}" href="{{ url_for('views.community') }}">COMMUNITY</a>
         {% if user.is_authenticated %}
         <a class="{{ 'active' if request.endpoint == 'views.notes' else '' }}" href="{{ url_for('views.notes') }}">YOUR NOTES</a>
         {% if is_coach(user) %}
         <a class="{{ 'active' if request.endpoint in ['views.coach_applications', 'views.coach_applications_csv'] else '' }}" href="{{ url_for('views.coach_applications') }}">COACH REVIEW</a>
+        <a class="{{ 'active' if request.endpoint == 'coach.updates' else '' }}" href="{{ url_for('coach.updates') }}">SITE UPDATES</a>
         {% endif %}
         <a href="{{ url_for('auth.logout') }}">SIGN OUT</a>
         {% else %}
@@ -90,6 +92,10 @@
         <p class="harvey-privacy">AI replies use GroqCloud. Don’t share passwords or private keys.</p>
       </div>
     </section>
+
+    <a class="silence-radio" href="{{ url_for('views.radio') }}" target="silence-radio" aria-label="Open the looping SILENCE music player in a separate window">
+      <span aria-hidden="true">♫</span> SILENCE RADIO <span class="radio-toggle-state">PLAY ↗</span>
+    </a>
 
     <footer class="silence-footer">
       <a class="footer-brand" href="{{ url_for('views.home') }}">SILENCE <span>// SHHHH</span></a>

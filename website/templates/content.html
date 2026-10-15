@@ -18,6 +18,28 @@
       <p>Take a moment, watch the clip, then head over to the community to keep the conversation going.</p>
       <a class="button button-primary" href="https://medal.tv/games/valorant/clips/nbrmH0AULqK4_27NI?invite=cr-MSx5S0csNDQ4MDYyODQ3" target="_blank" rel="noopener noreferrer">OPEN CLIP ON MEDAL <span aria-hidden="true">↗</span></a>
     </div>
+    <section class="announcements-section" aria-labelledby="announcements-title">
+      <div class="section-heading">
+        <div><p class="section-kicker">OFFICIAL SILENCE SIGNAL</p><h2 id="announcements-title">NEWS & <span>UPDATES.</span></h2></div>
+        <a class="team-record-source" href="{{ url_for('views.matches_page') }}">MATCH CENTER ↗</a>
+      </div>
+      {% if announcements %}
+      <div class="announcement-grid">
+        {% for announcement in announcements %}
+        <article class="announcement-card">
+          <time datetime="{{ announcement.created_at.isoformat() }}">{{ announcement.created_at.strftime('%b %d, %Y') }}</time>
+          <h3>{{ announcement.title }}</h3>
+          <p>{{ announcement.body }}</p>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="content-coming-soon">
+        <div><p class="section-kicker">NO NEW ANNOUNCEMENTS</p><h2>MORE SIGNAL <span>SOON.</span></h2></div>
+        <span>CHECK BACK FOR TEAM NEWS</span>
+      </div>
+      {% endif %}
+    </section>
     <div class="feature-video">
       <iframe
         src="https://medal.tv/games/valorant/clip/nbrmH0AULqK4_27NI"

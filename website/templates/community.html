@@ -55,10 +55,14 @@
       </label>
       <div class="join-application-submit">
         <button class="button button-primary" type="submit">SUBMIT PLAYER QUESTIONNAIRE <span aria-hidden="true">↗</span></button>
-        <span>Submit only information you are comfortable sharing with the SILENCE coaching staff.</span>
+        <span>After submitting, save the one-time tracking code to check your review status. Submit only information you are comfortable sharing with SILENCE coaches.</span>
       </div>
     </form>
     {% endif %}
+    <div class="tryout-status-prompt">
+      <span>ALREADY APPLIED?</span>
+      <a href="{{ url_for('views.tryout_status') }}">CHECK YOUR TRYOUT STATUS ↗</a>
+    </div>
   </section>
   <section class="team-record" aria-labelledby="team-record-title">
     <div class="team-record-heading">
@@ -122,6 +126,9 @@
       · Snapshot checked {{ matches_checked }}. Refresh this snapshot when VLR adds results.
     </p>
   </section>
-  <div class="community-note"><strong>DISCORD INVITE</strong><span>A verified community invite hasn’t been added yet. We won’t send you to a placeholder or an unrelated server.</span></div>
+  <div class="community-links">
+    <a href="https://www.vlr.gg/team/22912/silence" target="_blank" rel="noopener noreferrer"><strong>FOLLOW THE TEAM</strong><span>Visit the verified SILENCE VLR page for roster and competition information.</span><b>VIEW VLR ↗</b></a>
+    <a href="mailto:unbelievablecheese@gmail.com"><strong>CONTACT SILENCE</strong><span>Reach the organization directly with community, partnership, or team questions.</span><b>SEND EMAIL ↗</b></a>
+  </div>
 </section>
 {% endblock %}

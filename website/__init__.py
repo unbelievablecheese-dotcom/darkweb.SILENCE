@@ -46,7 +46,7 @@ def create_app(test_config=None):
             ), 401
         return redirect(url_for(login_manager.login_view, next=request.full_path))
 
-    from .views import is_coach, views
+    from .views import PLAYER_ROSTER, is_coach, views
     from .auth import auth
     from .coach import coach
 
@@ -55,19 +55,28 @@ def create_app(test_config=None):
     app.register_blueprint(coach)
     app.jinja_env.globals['is_coach'] = is_coach
 
-    from .models import CoachRequest, User
+    from .models import CoachRequest, PlayerApplication, PlayerProfile, User
 
     with app.app_context():
         db.create_all()
-        coach_request_columns = {
-            column['name']
-            for column in db.inspect(db.engine).get_columns(CoachRequest.__tablename__)
+        schema_additions = {
+            CoachRequest.__tablename__: {'last_email_sent_at': 'INTEGER'},
+            PlayerApplication.__tablename__: {'status_code_hash': 'VARCHAR(64)'},
+            PlayerProfile.__tablename__: {'rank': 'VARCHAR(120)'},
         }
-        if 'last_email_sent_at' not in coach_request_columns:
-            with db.engine.begin() as connection:
-                connection.execute(
-                    db.text('ALTER TABLE coach_request ADD COLUMN last_email_sent_at INTEGER')
-                )
+        inspector = db.inspect(db.engine)
+        for table_name, columns in schema_additions.items():
+            existing_columns = {column['name'] for column in inspector.get_columns(table_name)}
+            for column_name, column_type in columns.items():
+                if column_name not in existing_columns:
+                    with db.engine.begin() as connection:
+                        connection.execute(
+                            db.text(f'ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}')
+                        )
+        for player in PLAYER_ROSTER:
+            if db.session.get(PlayerProfile, player['slug']) is None:
+                db.session.add(PlayerProfile(slug=player['slug'], name=player['name']))
+        db.session.commit()
 
     @login_manager.user_loader
     def load_user(user_id):

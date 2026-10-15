@@ -1,13 +1,16 @@
 import csv
+import hashlib
 import io
 import os
+import secrets
+from datetime import datetime, timezone
 
 import httpx
 from flask import Blueprint, Response, abort, current_app, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from . import db
-from .models import CoachRequest, Note, PlayerApplication
+from .models import Announcement, CoachRequest, Note, PlayerApplication, PlayerProfile, ScheduledMatch
 
 views = Blueprint('views', __name__)
 
@@ -79,11 +82,11 @@ VLR_MATCHES = [
 VLR_MATCHES_CHECKED = "14 October 2026"
 
 PLAYER_ROSTER = [
-    {"name": "Flawed", "url": "https://www.vlr.gg/player/66089/flawed"},
-    {"name": "Fizzy", "url": "https://www.vlr.gg/player/65294/fizzy"},
-    {"name": "Ghost", "url": "https://www.vlr.gg/player/65296/ghost"},
-    {"name": "doom", "url": "https://www.vlr.gg/player/65295/doom"},
-    {"name": "miniKong", "url": "https://www.vlr.gg/player/65297/minikong"},
+    {"slug": "flawed", "name": "Flawed", "url": "https://www.vlr.gg/player/66089/flawed"},
+    {"slug": "fizzy", "name": "Fizzy", "url": "https://www.vlr.gg/player/65294/fizzy"},
+    {"slug": "ghost", "name": "Ghost", "url": "https://www.vlr.gg/player/65296/ghost"},
+    {"slug": "doom", "name": "doom", "url": "https://www.vlr.gg/player/65295/doom"},
+    {"slug": "minikong", "name": "miniKong", "url": "https://www.vlr.gg/player/65297/minikong"},
 ]
 PLAYER_ROSTER_CHECKED = "14 October 2026"
 APPLICATION_STATUSES = ("new", "reviewing", "shortlisted", "declined")
@@ -109,6 +112,16 @@ def is_coach(user):
         )
     )
     return approved_request is not None
+
+
+def staff_access_configured():
+    if configured_coach_emails():
+        return True
+    return db.session.scalar(
+        db.select(CoachRequest.id)
+        .where(CoachRequest.status == 'approved')
+        .limit(1)
+    ) is not None
 
 
 def summarize_match_record(matches):
@@ -151,13 +164,50 @@ def home():
 
 @views.route('/teams')
 def teams():
+    profiles = {
+        profile.slug: profile
+        for profile in db.session.scalars(db.select(PlayerProfile)).all()
+    }
     return render_template(
         'teams.html',
         user=current_user,
         teams=TEAMS,
         player_roster=PLAYER_ROSTER,
         roster_checked=PLAYER_ROSTER_CHECKED,
+        player_profiles=profiles,
     )
+
+
+@views.route('/players/<string:slug>')
+def player_profile(slug):
+    player = next((player for player in PLAYER_ROSTER if player['slug'] == slug), None)
+    if player is None:
+        abort(404)
+    profile = db.session.get(PlayerProfile, slug)
+    return render_template('player_profile.html', user=current_user, player=player, profile=profile)
+
+
+@views.route('/matches')
+def matches_page():
+    record = summarize_match_record(VLR_MATCHES)
+    fixtures = db.session.scalars(
+        db.select(ScheduledMatch)
+        .where(ScheduledMatch.starts_at >= datetime.now(timezone.utc))
+        .order_by(ScheduledMatch.starts_at)
+    ).all()
+    return render_template(
+        'matches.html',
+        user=current_user,
+        matches=VLR_MATCHES,
+        record=record,
+        matches_checked=VLR_MATCHES_CHECKED,
+        fixtures=fixtures,
+    )
+
+
+@views.route('/radio')
+def radio():
+    return render_template('radio.html', user=current_user)
 
 
 @views.route('/merch')
@@ -167,7 +217,10 @@ def merch():
 
 @views.route('/content')
 def content():
-    return render_template('content.html', user=current_user)
+    announcements = db.session.scalars(
+        db.select(Announcement).order_by(Announcement.created_at.desc()).limit(20)
+    ).all()
+    return render_template('content.html', user=current_user, announcements=announcements)
 
 
 @views.route('/community')
@@ -180,13 +233,13 @@ def community():
         record=record,
         matches_checked=VLR_MATCHES_CHECKED,
         is_coach=is_coach,
-        applications_enabled=bool(configured_coach_emails()),
+        applications_enabled=staff_access_configured(),
     )
 
 
 @views.route('/join-silence/application', methods=['POST'])
 def join_application():
-    if not configured_coach_emails():
+    if not staff_access_configured():
         flash('Player applications are not open until SILENCE staff access is configured.', category='error')
         return redirect(url_for('views.community') + '#join-silence')
 
@@ -229,13 +282,30 @@ def join_application():
         flash('Please confirm that SILENCE may store your application for coach review.', category='error')
         return redirect(url_for('views.community') + '#join-silence')
 
-    application = PlayerApplication()
+    status_code = secrets.token_urlsafe(24)
+    application = PlayerApplication(status_code_hash=hashlib.sha256(status_code.encode()).hexdigest())
     for key, value in answers.items():
         setattr(application, key, value)
     db.session.add(application)
     db.session.commit()
-    flash('Your player questionnaire was submitted for coach review.', category='success')
-    return redirect(url_for('views.community') + '#join-silence')
+    return render_template('tryout_status.html', user=current_user, application=application, status_code=status_code)
+
+
+@views.route('/tryout-status', methods=['GET', 'POST'])
+def tryout_status():
+    application = None
+    if request.method == 'POST':
+        status_code = request.form.get('status_code', '').strip()
+        if not status_code or len(status_code) > 100:
+            flash('Enter the private tracking code from your submission confirmation.', category='error')
+        else:
+            code_hash = hashlib.sha256(status_code.encode()).hexdigest()
+            application = db.session.scalar(
+                db.select(PlayerApplication).where(PlayerApplication.status_code_hash == code_hash)
+            )
+            if application is None:
+                flash('That tracking code was not recognized. Check the code and try again.', category='error')
+    return render_template('tryout_status.html', user=current_user, application=application)
 
 
 def filtered_applications():

@@ -77,3 +77,23 @@ then be available from the **COACH?** button on the sign-in page. The approval
 email goes to `unbelievablecheese@gmail.com`; opening its seven-day link shows
 the applicant details and requires clicking **APPROVE COACH**. The email link
 is single-use, and link previews do not approve requests.
+
+## Match center, tryout tracking, profiles, and news
+
+- Approved coaches can open **SITE UPDATES** to publish announcements, add
+  confirmed upcoming fixtures with optional stream links, and edit public
+  roster profiles. Only publish player-approved profile details; blank fields
+  stay hidden. The team's existing VLR result snapshot is still maintained in
+  the app code and should be checked against VLR before being updated.
+- The **MATCHES** page shows that snapshot and coach-published upcoming games.
+  Tournament standings and live results remain linked to VLR rather than being
+  guessed or presented as an automatic live feed.
+- Applicants receive a one-time private tracking code after submitting the
+  questionnaire. They must save it to check review status later; it is stored
+  as a hash and cannot be recovered if lost. Coaches update the status from
+  **COACH REVIEW**.
+- The optional **SILENCE RADIO** button opens the YouTube video in a reusable
+  separate window, set to loop, so it can continue while visitors navigate
+  the site. Playback starts only after a visitor chooses the button; browser
+  settings or the video's embedding availability may require pressing Play in
+  the YouTube controls.

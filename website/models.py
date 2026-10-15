@@ -14,6 +14,7 @@ class Note(db.Model):
 class PlayerApplication(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     submitted_at = db.Column(db.DateTime(timezone=True), nullable=False, default=func.now())
+    status_code_hash = db.Column(db.String(64), unique=True, index=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(254), nullable=False)
     game = db.Column(db.String(100), nullable=False)
@@ -34,6 +35,32 @@ class CoachRequest(db.Model):
     last_email_sent_at = db.Column(db.Integer)
     status = db.Column(db.String(20), nullable=False, default='pending', index=True)
     user = db.relationship('User', backref=db.backref('coach_request', uselist=False))
+
+
+class Announcement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    body = db.Column(db.String(2000), nullable=False)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=func.now(), index=True)
+
+
+class ScheduledMatch(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    opponent = db.Column(db.String(120), nullable=False)
+    event = db.Column(db.String(160), nullable=False)
+    starts_at = db.Column(db.DateTime(timezone=True), nullable=False, index=True)
+    stream_url = db.Column(db.String(500))
+
+
+class PlayerProfile(db.Model):
+    slug = db.Column(db.String(40), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(120))
+    rank = db.Column(db.String(120))
+    bio = db.Column(db.String(1200))
+    social_url = db.Column(db.String(500))
+    settings = db.Column(db.String(500))
+    pc_specs = db.Column(db.String(500))
 
 
 class User(db.Model, UserMixin):

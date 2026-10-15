@@ -1,6 +1,7 @@
 import os
 import smtplib
 import time
+from datetime import datetime, timezone
 from email.message import EmailMessage
 from urllib.parse import urlparse
 
@@ -10,7 +11,8 @@ from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash
 
 from . import db
-from .models import CoachRequest, User
+from .models import Announcement, CoachRequest, PlayerProfile, ScheduledMatch, User
+from .views import PLAYER_ROSTER, is_coach
 
 coach = Blueprint('coach', __name__)
 APPROVAL_EMAIL = 'unbelievablecheese@gmail.com'
@@ -214,3 +216,126 @@ def approve_request(token):
         coach_request.status = 'approved'
         db.session.commit()
     return render_template('coach_approval.html', user=current_user, coach_request=coach_request)
+
+
+@coach.route('/coach/updates', methods=['GET', 'POST'])
+@login_required
+def updates():
+    if not is_coach(current_user):
+        abort(403)
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'announcement':
+            title = request.form.get('title', '').strip()
+            body = request.form.get('body', '').strip()
+            if not title or len(title) > 120 or not body or len(body) > 2000:
+                flash('Add an announcement title and body within the stated limits.', category='error')
+            else:
+                db.session.add(Announcement(title=title, body=body))
+                db.session.commit()
+                flash('Announcement published.', category='success')
+                return redirect(url_for('coach.updates'))
+        elif action == 'match':
+            opponent = request.form.get('opponent', '').strip()
+            event = request.form.get('event', '').strip()
+            kickoff = request.form.get('starts_at', '').strip()
+            stream_url = request.form.get('stream_url', '').strip()
+            try:
+                starts_at = datetime.fromisoformat(kickoff)
+                if starts_at.tzinfo is None:
+                    starts_at = starts_at.replace(tzinfo=timezone.utc)
+            except ValueError:
+                starts_at = None
+            parsed_stream = urlparse(stream_url) if stream_url else None
+            if (
+                not opponent
+                or len(opponent) > 120
+                or not event
+                or len(event) > 160
+                or starts_at is None
+                or starts_at <= datetime.now(timezone.utc)
+            ):
+                flash('Enter an opponent, event, and valid match date/time.', category='error')
+            elif stream_url and (parsed_stream.scheme not in ('https', 'http') or not parsed_stream.netloc or len(stream_url) > 500):
+                flash('Stream link must be a valid HTTP or HTTPS URL.', category='error')
+            else:
+                db.session.add(
+                    ScheduledMatch(
+                        opponent=opponent,
+                        event=event,
+                        starts_at=starts_at,
+                        stream_url=stream_url or None,
+                    )
+                )
+                db.session.commit()
+                flash('Upcoming match published.', category='success')
+                return redirect(url_for('coach.updates'))
+        elif action == 'profile':
+            slug = request.form.get('slug', '')
+            profile = db.session.get(PlayerProfile, slug)
+            role = request.form.get('role', '').strip()
+            rank = request.form.get('rank', '').strip()
+            bio = request.form.get('bio', '').strip()
+            social_url = request.form.get('social_url', '').strip()
+            settings = request.form.get('settings', '').strip()
+            pc_specs = request.form.get('pc_specs', '').strip()
+            valid_slug = any(player['slug'] == slug for player in PLAYER_ROSTER)
+            parsed_social_url = urlparse(social_url) if social_url else None
+            if (
+                not valid_slug
+                or profile is None
+                or len(role) > 120
+                or len(rank) > 120
+                or len(bio) > 1200
+                or len(social_url) > 500
+                or len(settings) > 500
+                or len(pc_specs) > 500
+            ):
+                flash('Check the player profile fields and length limits.', category='error')
+            elif social_url and (
+                parsed_social_url.scheme not in ('https', 'http') or not parsed_social_url.netloc
+            ):
+                flash('Social profile must be a valid HTTP or HTTPS URL.', category='error')
+            else:
+                profile.role = role or None
+                profile.rank = rank or None
+                profile.bio = bio or None
+                profile.social_url = social_url or None
+                profile.settings = settings or None
+                profile.pc_specs = pc_specs or None
+                db.session.commit()
+                flash('Player profile updated.', category='success')
+                return redirect(url_for('coach.updates'))
+        else:
+            abort(400)
+    announcements = db.session.scalars(
+        db.select(Announcement).order_by(Announcement.created_at.desc())
+    ).all()
+    fixtures = db.session.scalars(
+        db.select(ScheduledMatch).order_by(ScheduledMatch.starts_at)
+    ).all()
+    profiles = db.session.scalars(db.select(PlayerProfile).order_by(PlayerProfile.name)).all()
+    return render_template(
+        'coach_updates.html',
+        user=current_user,
+        announcements=announcements,
+        fixtures=fixtures,
+        profiles=profiles,
+    )
+
+
+@coach.route('/coach/updates/<string:content_type>/<int:content_id>/delete', methods=['POST'])
+@login_required
+def delete_update(content_type, content_id):
+    if not is_coach(current_user):
+        abort(403)
+    model = {'announcement': Announcement, 'match': ScheduledMatch}.get(content_type)
+    if model is None:
+        abort(404)
+    item = db.session.get(model, content_id)
+    if item is None:
+        abort(404)
+    db.session.delete(item)
+    db.session.commit()
+    flash('SILENCE update removed.', category='success')
+    return redirect(url_for('coach.updates'))

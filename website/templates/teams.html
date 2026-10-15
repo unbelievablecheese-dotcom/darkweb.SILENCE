@@ -27,9 +27,12 @@
       <div id="silence-roster" class="roster-list">
         <div class="roster-list-heading"><strong>VLR-LISTED PLAYERS</strong><span>CHECKED {{ roster_checked }}</span></div>
         {% for player in player_roster %}
-        <a href="{{ player.url }}" target="_blank" rel="noopener noreferrer">{{ player.name }} <span aria-hidden="true">↗</span></a>
+        <a href="{{ url_for('views.player_profile', slug=player.slug) }}">
+          <span>{{ player.name }}{% if player_profiles.get(player.slug) and player_profiles[player.slug].role %}<small> // {{ player_profiles[player.slug].role }}</small>{% endif %}</span>
+          <span aria-hidden="true">↗</span>
+        </a>
         {% endfor %}
-        <p>Player profile, rank, PC specs, and settings may not be published or current. Check with the player for verified details.</p>
+        <p>Public profile details appear only when SILENCE staff publish player-approved information. Verify current details with the player.</p>
       </div>
       {% endif %}
       <span class="team-link">ROSTER ANNOUNCEMENTS <span aria-hidden="true">↗</span></span>
