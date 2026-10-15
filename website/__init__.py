@@ -48,15 +48,26 @@ def create_app(test_config=None):
 
     from .views import is_coach, views
     from .auth import auth
+    from .coach import coach
 
     app.register_blueprint(views)
     app.register_blueprint(auth)
+    app.register_blueprint(coach)
     app.jinja_env.globals['is_coach'] = is_coach
 
-    from .models import User
+    from .models import CoachRequest, User
 
     with app.app_context():
         db.create_all()
+        coach_request_columns = {
+            column['name']
+            for column in db.inspect(db.engine).get_columns(CoachRequest.__tablename__)
+        }
+        if 'last_email_sent_at' not in coach_request_columns:
+            with db.engine.begin() as connection:
+                connection.execute(
+                    db.text('ALTER TABLE coach_request ADD COLUMN last_email_sent_at INTEGER')
+                )
 
     @login_manager.user_loader
     def load_user(user_id):

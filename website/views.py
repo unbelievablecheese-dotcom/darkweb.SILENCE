@@ -7,7 +7,7 @@ from flask import Blueprint, Response, abort, current_app, flash, jsonify, redir
 from flask_login import current_user, login_required
 
 from . import db
-from .models import Note, PlayerApplication
+from .models import CoachRequest, Note, PlayerApplication
 
 views = Blueprint('views', __name__)
 
@@ -100,7 +100,15 @@ def configured_coach_emails():
 def is_coach(user):
     if not user or not getattr(user, "is_authenticated", False):
         return False
-    return user.email.lower() in configured_coach_emails()
+    if user.email.lower() in configured_coach_emails():
+        return True
+    approved_request = db.session.scalar(
+        db.select(CoachRequest.id).where(
+            CoachRequest.user_id == user.id,
+            CoachRequest.status == 'approved',
+        )
+    )
+    return approved_request is not None
 
 
 def summarize_match_record(matches):

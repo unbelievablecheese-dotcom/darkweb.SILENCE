@@ -27,6 +27,15 @@ class PlayerApplication(db.Model):
     status = db.Column(db.String(20), nullable=False, default='new', index=True)
 
 
+class CoachRequest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, unique=True, index=True)
+    submitted_at = db.Column(db.DateTime(timezone=True), nullable=False, default=func.now())
+    last_email_sent_at = db.Column(db.Integer)
+    status = db.Column(db.String(20), nullable=False, default='pending', index=True)
+    user = db.relationship('User', backref=db.backref('coach_request', uselist=False))
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(150), unique=True, nullable=False, index=True)

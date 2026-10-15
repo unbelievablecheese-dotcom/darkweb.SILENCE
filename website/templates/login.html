@@ -17,5 +17,6 @@
     <button type="submit" class="auth-submit">SIGN IN TO SILENCE</button>
   </form>
   <p class="auth-switch">NEW TO SILENCE? <a href="{{ url_for('auth.sign_up') }}">CREATE AN ACCOUNT</a></p>
+  <a class="auth-coach-button" href="{{ url_for('coach.sign_up') }}">COACH? REQUEST A COACH ACCOUNT <span aria-hidden="true">↗</span></a>
 </section>
 {% endblock %}

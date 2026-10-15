@@ -40,10 +40,10 @@ configured as private Render environment variables as well.
 ## Coach access and player applications
 
 1. Create an account for each trusted coach or manager on the website.
-2. In Render's web-service **Environment** settings, set `COACH_EMAILS` to a
-   comma-separated list of those accounts' email addresses, for example
-   `coach@example.com,manager@example.com`. Save and redeploy. Only signed-in
-   accounts whose email appears in this setting can open `/coach/applications`.
+2. For existing trusted coaches or managers, set `COACH_EMAILS` in Render's
+   web-service **Environment** settings to a comma-separated list of account
+   email addresses, for example `coach@example.com,manager@example.com`. Save
+   and redeploy. Newly approved coach requests also grant coach access.
 3. Player submissions are stored in the app's configured database. Coaches can
    filter by role, rank, and status, update review status, and export filtered
    applications to CSV for import into a spreadsheet. The app does not email or
@@ -52,3 +52,28 @@ configured as private Render environment variables as well.
    sensitive personal data; limit staff access and remove records when no
    longer needed. Use a persistent database such as Neon in production so
    submissions survive service restarts.
+
+## Coach account approval email
+
+Coach signup creates a normal member account with a pending coach request.
+Coach-only tools stay locked until the owner approves the request. Configure
+these private Render environment variables before enabling coach signup:
+
+- `PUBLIC_BASE_URL`: the public HTTPS URL of the deployed site, without a
+  trailing slash (for example, `https://your-site.onrender.com`).
+- `SMTP_HOST`: your outgoing email provider's SMTP host. For Gmail, use
+  `smtp.gmail.com`.
+- `SMTP_PORT`: `587` for STARTTLS or `465` for SMTP SSL.
+- `SMTP_USERNAME`: the sending email account.
+- `SMTP_PASSWORD`: the provider's app password or SMTP credential, never the
+  account's ordinary sign-in password.
+- `SMTP_FROM`: the sender address; it can be the same as `SMTP_USERNAME`.
+
+For Gmail, enable 2-Step Verification on the sending account and create a
+Google App Password. Do not use or share the Gmail account's regular password.
+Keep `SECRET_KEY` stable across restarts and redeploys so pending approval links
+remain valid. After adding these settings, redeploy. Coach applications will
+then be available from the **COACH?** button on the sign-in page. The approval
+email goes to `unbelievablecheese@gmail.com`; opening its seven-day link shows
+the applicant details and requires clicking **APPROVE COACH**. The email link
+is single-use, and link previews do not approve requests.

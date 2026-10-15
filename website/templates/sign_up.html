@@ -1,10 +1,17 @@
 {% extends "base.html" %}
-{% block title %}JOIN // SILENCE{% endblock %}
+{% block title %}{{ 'COACH REQUEST' if coach_mode else 'JOIN' }} // SILENCE{% endblock %}
 {% block content %}
 <section class="auth-card">
-  <p class="section-kicker">SILENCE // NEW MEMBER</p>
-  <h1>JOIN THE QUIET.</h1>
+  <p class="section-kicker">{{ 'SILENCE // COACH APPLICATION' if coach_mode else 'SILENCE // NEW MEMBER' }}</p>
+  <h1>{{ 'REQUEST COACH ACCESS.' if coach_mode else 'JOIN THE QUIET.' }}</h1>
+  {% if coach_mode %}
+  <p class="auth-description">Create your SILENCE account and request coach access. Your account stays a regular member account until the site owner approves your request by email.</p>
+  {% else %}
   <p class="auth-description">Create an account for SILENCE and keep your notes private.</p>
+  {% endif %}
+  {% if coach_signup_unavailable %}
+  <div class="coach-signup-unavailable" role="status">Coach requests are temporarily closed until the approval email service is configured.</div>
+  {% endif %}
   <form method="POST" class="auth-form">
     <div class="form-group">
       <label for="email">EMAIL ADDRESS</label>
@@ -22,8 +29,14 @@
       <label for="password2">CONFIRM PASSWORD</label>
       <input type="password" class="form-control" id="password2" name="password2" placeholder="Enter your password again" autocomplete="new-password" minlength="7" required />
     </div>
-    <button type="submit" class="auth-submit">CREATE SILENCE ACCOUNT</button>
+    <button type="submit" class="auth-submit" {% if coach_signup_unavailable %}disabled{% endif %}>
+      {{ 'CREATE ACCOUNT & REQUEST COACH ACCESS' if coach_mode else 'CREATE SILENCE ACCOUNT' }}
+    </button>
   </form>
+  {% if coach_mode %}
+  <p class="auth-switch">ALREADY HAVE AN ACCOUNT? <a href="{{ url_for('auth.login') }}">SIGN IN</a></p>
+  {% else %}
   <p class="auth-switch">ALREADY WITH SILENCE? <a href="{{ url_for('auth.login') }}">SIGN IN</a></p>
+  {% endif %}
 </section>
 {% endblock %}

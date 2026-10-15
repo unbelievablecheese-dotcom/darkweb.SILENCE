@@ -1779,6 +1779,82 @@ a {
   font-weight: 750;
 }
 
+.auth-coach-button {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-top: 13px;
+  padding: 12px;
+  border: 1px solid rgba(255, 54, 94, 0.35);
+  color: #e9e6eb;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+}
+
+.auth-coach-button span {
+  color: var(--silence-red);
+}
+
+.auth-coach-button:hover {
+  border-color: var(--silence-red);
+  background: rgba(255, 54, 94, 0.06);
+}
+
+.coach-signup-unavailable {
+  margin: 12px 0;
+  padding: 11px;
+  border-left: 2px solid var(--silence-red);
+  background: rgba(255, 54, 94, 0.06);
+  color: #d2cfd5;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.auth-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.coach-status-card > form {
+  margin-top: 15px;
+}
+
+.coach-status-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+  text-decoration: none;
+}
+
+.coach-request-email {
+  padding: 11px;
+  border: 1px solid var(--silence-line);
+  color: #d2cfd5;
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+
+.coach-approval-identity {
+  display: grid;
+  gap: 6px;
+  margin: 18px 0;
+  padding: 13px;
+  border: 1px solid var(--silence-line);
+  background: #0b0b10;
+  color: #e9e6eb;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.coach-approval-identity small {
+  color: #96939b;
+  font-size: 8px;
+}
+
 @keyframes emblem-rotate {
   to { transform: rotate(360deg); }
 }
