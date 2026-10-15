@@ -46,6 +46,54 @@ TEAMS = [
     },
 ]
 
+VLR_MATCHES = [
+    {
+        "date": "2026-10-02",
+        "opponent": "the chuds",
+        "score": "0–2",
+        "result": "loss",
+        "event": "FunhaverGG: Back to Basics 2.0 #6",
+    },
+    {
+        "date": "2026-10-02",
+        "opponent": "Evil Geniuses Academy",
+        "score": "0–2",
+        "result": "loss",
+        "event": "FunhaverGG: Back to Basics 2.0 #6",
+    },
+    {
+        "date": "2026-07-03",
+        "opponent": "who is greg",
+        "score": "1–2",
+        "result": "loss",
+        "event": "FunhaverGG: Plain 2.0 #1",
+    },
+    {
+        "date": "2026-07-03",
+        "opponent": "4kt",
+        "score": "0–2",
+        "result": "loss",
+        "event": "FunhaverGG: Plain 2.0 #1",
+    },
+]
+VLR_MATCHES_CHECKED = "14 October 2026"
+
+
+def summarize_match_record(matches):
+    wins = sum(match["result"] == "win" for match in matches)
+    losses = sum(match["result"] == "loss" for match in matches)
+    played = wins + losses
+    win_percent = wins / played * 100 if played else 0
+
+    return {
+        "played": played,
+        "wins": wins,
+        "losses": losses,
+        "win_percent": win_percent,
+        "loss_percent": 100 - win_percent if played else 0,
+    }
+
+
 @views.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -86,7 +134,14 @@ def content():
 
 @views.route('/community')
 def community():
-    return render_template('community.html', user=current_user)
+    record = summarize_match_record(VLR_MATCHES)
+    return render_template(
+        'community.html',
+        user=current_user,
+        matches=VLR_MATCHES,
+        record=record,
+        matches_checked=VLR_MATCHES_CHECKED,
+    )
 
 
 @views.route('/notes', methods=['GET', 'POST'])

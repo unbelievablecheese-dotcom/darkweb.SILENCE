@@ -28,6 +28,68 @@
     <article><span>02</span><h3>MEET THE TEAMS</h3><p>Explore the current SILENCE programs and follow along as roster details are announced.</p><a href="{{ url_for('views.teams') }}">EXPLORE THE TEAMS ↗</a></article>
     <article><span>03</span><h3>ASK H.A.R.V.E.Y.</h3><p>Open the assistant in the corner for help with the site, notes, and general questions.</p><button type="button" class="open-harvey">OPEN H.A.R.V.E.Y. ↗</button></article>
   </div>
+  <section class="team-record" aria-labelledby="team-record-title">
+    <div class="team-record-heading">
+      <div>
+        <p class="section-kicker">VALORANT // MATCH HISTORY</p>
+        <h2 id="team-record-title">THE <span>RECORD.</span></h2>
+      </div>
+      <a class="team-record-source" href="https://www.vlr.gg/team/22912/silence" target="_blank" rel="noopener noreferrer">
+        VIEW SILENCE ON VLR <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+    <p class="team-record-scope">
+      VLR-listed completed matches shown below. This snapshot is not a claim of the team's all-time record.
+    </p>
+    <div class="team-record-panel">
+      <div class="team-record-summary">
+        <div class="team-record-chart">
+          <svg viewBox="0 0 120 120" role="img" aria-labelledby="record-chart-title record-chart-description">
+            <title id="record-chart-title">SILENCE match outcomes</title>
+            <desc id="record-chart-description">
+              {{ record.wins }} wins and {{ record.losses }} losses across {{ record.played }} VLR-listed matches.
+            </desc>
+            <circle class="record-chart-track" cx="60" cy="60" r="46" pathLength="100"></circle>
+            {% if record.played %}
+            <circle class="record-chart-win" cx="60" cy="60" r="46" pathLength="100"
+              stroke-dasharray="{{ '%.2f'|format(record.win_percent) }} {{ '%.2f'|format(record.loss_percent) }}"></circle>
+            <circle class="record-chart-loss" cx="60" cy="60" r="46" pathLength="100"
+              stroke-dasharray="{{ '%.2f'|format(record.loss_percent) }} {{ '%.2f'|format(record.win_percent) }}"
+              stroke-dashoffset="-{{ '%.2f'|format(record.win_percent) }}"></circle>
+            {% endif %}
+            <text class="record-chart-total" x="60" y="58">{{ record.played }}</text>
+            <text class="record-chart-label" x="60" y="75">MATCHES</text>
+          </svg>
+        </div>
+        <div class="team-record-stats" aria-label="Match record statistics">
+          <div><span>WINS</span><strong>{{ record.wins }}</strong></div>
+          <div><span>LOSSES</span><strong>{{ record.losses }}</strong></div>
+          <div><span>WIN RATE</span><strong>{{ '%.0f'|format(record.win_percent) }}%</strong></div>
+          <div><span>W : L</span><strong>{{ record.wins }} : {{ record.losses }}</strong></div>
+        </div>
+      </div>
+      {% if matches %}
+      <ol class="team-match-list" aria-label="VLR-listed match results">
+        {% for match in matches %}
+        <li class="team-match team-match-{{ match.result }}">
+          <span class="team-match-outcome" aria-label="{{ match.result }}">{{ 'W' if match.result == 'win' else 'L' }}</span>
+          <div class="team-match-details">
+            <strong>SILENCE <span>{{ match.score }}</span> {{ match.opponent }}</strong>
+            <small>{{ match.event }}</small>
+          </div>
+          <time datetime="{{ match.date }}">{{ match.date }}</time>
+        </li>
+        {% endfor %}
+      </ol>
+      {% else %}
+      <p class="team-record-empty">No completed VLR match results are available for this snapshot.</p>
+      {% endif %}
+    </div>
+    <p class="team-record-attribution">
+      Source: <a href="https://www.vlr.gg/team/22912/silence" target="_blank" rel="noopener noreferrer">VLR.gg SILENCE profile</a>
+      · Snapshot checked {{ matches_checked }}. Refresh this snapshot when VLR adds results.
+    </p>
+  </section>
   <div class="community-note"><strong>DISCORD INVITE</strong><span>A verified community invite hasn’t been added yet. We won’t send you to a placeholder or an unrelated server.</span></div>
 </section>
 {% endblock %}
