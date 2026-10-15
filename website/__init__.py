@@ -2,7 +2,7 @@ import os
 import secrets
 from pathlib import Path
 
-from flask import Flask
+from flask import Flask, jsonify, redirect, request, url_for
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
@@ -36,6 +36,15 @@ def create_app(test_config=None):
     db.init_app(app)
     login_manager.login_view = "auth.login"
     login_manager.init_app(app)
+
+    @login_manager.unauthorized_handler
+    def handle_unauthorized():
+        if request.endpoint == "views.harvey_chat":
+            return jsonify(
+                error="Your session has expired. Sign in again to continue.",
+                loginUrl=url_for("auth.login"),
+            ), 401
+        return redirect(url_for(login_manager.login_view, next=request.url))
 
     from .views import views
     from .auth import auth

@@ -1,75 +1,137 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Harvey Market | Discover everyday favorites{% endblock %}
 {% block content %}
-<h1 class="text-center mt-4">Notes</h1>
-<div class="text-center mb-4">
-  <a
-    href="{{ url_for('static', filename='notes-illustration.svg') }}"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Open the notes illustration"
-    title="Open image"
-  >
-    <img
-      src="{{ url_for('static', filename='notes-illustration.svg') }}"
-      alt="A notebook with a pencil"
-      class="img-fluid"
-      style="max-width: 160px"
-    />
-  </a>
-</div>
-<section class="mb-4" aria-labelledby="featured-video-heading">
-  <h2 id="featured-video-heading" class="h4 text-center">Featured video</h2>
-  <div class="embed-responsive embed-responsive-16by9">
+<section class="welcome-strip">
+  <span><i class="fa fa-sparkles" aria-hidden="true"></i> A fresh place to discover everyday favorites</span>
+  <span>Browse the demo market, save a note, and ask H.A.R.V.E.Y. for help.</span>
+</section>
+
+<section class="market-hero" aria-labelledby="hero-heading">
+  <div class="hero-copy">
+    <p class="eyebrow">A MARKET MADE FOR GOOD FINDS</p>
+    <h1 id="hero-heading">Little things.<br /><span>Better days.</span></h1>
+    <p>Explore useful, thoughtful picks for your desk, your home, and everywhere in between.</p>
+    <a class="hero-button" href="#featured-products">Explore featured finds <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+    <div class="hero-assurance"><i class="fa fa-heart-o" aria-hidden="true"></i> A friendly demo shop — no checkout or payments</div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="hero-sun"></div>
+    <div class="hero-art-card hero-art-card-back">☕</div>
+    <div class="hero-art-card hero-art-card-front">🪴</div>
+    <div class="hero-art-caption"><span>CURATED FOR YOU</span><strong>Find your next favorite</strong></div>
+    <div class="hero-sparkle">✳</div>
+  </div>
+</section>
+
+<section id="departments" class="department-section" aria-labelledby="departments-heading">
+  <div class="section-heading">
+    <div><p class="eyebrow">BROWSE YOUR WAY</p><h2 id="departments-heading">Explore departments</h2></div>
+    <span>Good ideas start here</span>
+  </div>
+  <div class="department-list">
+    {% for category in categories %}
+    <button class="department-chip" type="button" data-category="{{ category|lower }}">
+      <span class="department-icon">
+        {% if category == "Electronics" %}⌁{% elif category == "Fashion" %}◇{% elif category == "Home" %}⌂{% elif category == "Outdoors" %}♧{% else %}✎{% endif %}
+      </span>
+      <span>{{ category }}</span><i class="fa fa-angle-right" aria-hidden="true"></i>
+    </button>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="featured-products" class="products-section" aria-labelledby="products-heading">
+  <div class="section-heading product-heading">
+    <div><p class="eyebrow">A FEW THINGS WE LOVE</p><h2 id="products-heading">Featured finds</h2></div>
+    <span id="product-result-count">{{ products|length }} hand-picked favorites</span>
+  </div>
+  <div class="product-grid" id="product-grid">
+    {% for product in products %}
+    {% set product_price = "%.2f"|format(product.price) %}
+    <article class="product-card"
+      data-product-id="{{ product.id }}"
+      data-name="{{ product.name|lower }}"
+      data-category="{{ product.category|lower }}"
+      data-price="{{ product_price }}">
+      <div class="product-art product-art-{{ product.color }}">
+        {% if product.badge %}<span class="product-badge">{{ product.badge }}</span>{% endif %}
+        <span class="product-emoji" aria-hidden="true">{{ product.icon }}</span>
+        <span class="product-art-word">{{ product.category }}</span>
+      </div>
+      <div class="product-info">
+        <p class="product-category">{{ product.category }}</p>
+        <h3>{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
+        <div class="product-rating" aria-label="{{ product.rating }} out of 5 stars">
+          <span aria-hidden="true">{% for _ in range(5) %}{{ "★" if loop.index <= product.rating|int else "☆" }}{% endfor %}</span>
+          <small>{{ product.rating }} ({{ product.reviews }})</small>
+        </div>
+        <div class="product-purchase">
+          <strong>${{ "%.2f"|format(product.price) }}</strong>
+          <button type="button" class="add-to-cart" data-product-id="{{ product.id }}">
+            <i class="fa fa-plus" aria-hidden="true"></i><span>Add</span>
+          </button>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+    <div class="no-products" id="no-products" hidden>
+      <span aria-hidden="true">⌕</span><h3>No finds just yet</h3><p>Try another search or browse all departments.</p>
+      <button type="button" id="clear-search">Show all products</button>
+    </div>
+  </div>
+</section>
+
+<section id="your-notes" class="notes-section" aria-labelledby="notes-heading">
+  <div class="notes-intro">
+    <div class="notes-illustration-wrap">
+      <img src="{{ url_for('static', filename='notes-illustration.svg') }}" alt="" class="notes-illustration" />
+    </div>
+    <div>
+      <p class="eyebrow">A LITTLE SPACE FOR YOURSELF</p>
+      <h2 id="notes-heading">Your notes, all in one place.</h2>
+      <p>Keep a reminder or save a passing thought. Your notes are private to your account.</p>
+    </div>
+  </div>
+  <div class="notes-workspace">
+    <form method="POST" class="note-form">
+      <label for="note">What would you like to remember?</label>
+      <textarea name="note" id="note" class="form-control" maxlength="10000" placeholder="Write a reminder, idea, or note..." required></textarea>
+      <div class="note-form-footer"><small>Up to 10,000 characters</small><button type="submit" class="note-submit"><i class="fa fa-plus" aria-hidden="true"></i> Save note</button></div>
+    </form>
+    <div class="saved-notes">
+      <div class="saved-notes-heading"><h3>Saved notes</h3><span>{{ user.notes|length }}</span></div>
+      <div class="empty-notes" {% if user.notes %}hidden{% endif %}>
+        <span aria-hidden="true">✎</span><p>No notes saved yet. Add one above to get started.</p>
+      </div>
+      <ul id="notes">
+        {% for note in user.notes %}
+        <li>
+          <span class="note-pin" aria-hidden="true">✦</span><span class="note-text">{{ note.data }}</span>
+          <button type="button" class="delete-note" data-note-id="{{ note.id }}" aria-label="Delete note" title="Delete note"><i class="fa fa-trash" aria-hidden="true"></i></button>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="community-section" aria-labelledby="featured-video-heading">
+  <div class="community-copy">
+    <p class="eyebrow">FROM OUR COMMUNITY</p>
+    <h2 id="featured-video-heading">A little inspiration between finds.</h2>
+    <p>Take a break and watch a featured clip from the community.</p>
+    <a href="https://medal.tv/games/valorant/clips/nbrmH0AULqK4_27NI?invite=cr-MSx5S0csNDQ4MDYyODQ3" target="_blank" rel="noopener noreferrer">Watch on Medal <i class="fa fa-external-link" aria-hidden="true"></i></a>
+  </div>
+  <div class="community-video">
     <iframe
-      class="embed-responsive-item"
       src="https://medal.tv/games/valorant/clip/nbrmH0AULqK4_27NI"
-      title="Valorant video on Medal"
+      title="Featured Valorant video on Medal"
       allow="autoplay; fullscreen"
       allowfullscreen
       loading="lazy"
       referrerpolicy="strict-origin-when-cross-origin"
     ></iframe>
   </div>
-  <p class="text-center mt-2">
-    <a
-      href="https://medal.tv/games/valorant/clips/nbrmH0AULqK4_27NI?invite=cr-MSx5S0csNDQ4MDYyODQ3"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Watch this clip on Medal
-    </a>
-  </p>
 </section>
-<ul class="list-group list-group-flush" id="notes">
-  {% for note in user.notes %}
-  <li class="list-group-item">
-    {{ note.data }}
-    <button
-      type="button"
-      class="close"
-      data-note-id="{{ note.id }}"
-      aria-label="Delete note"
-      title="Delete note"
-    >
-      <i class="fa fa-trash" aria-hidden="true"></i>
-    </button>
-  </li>
-  {% endfor %}
-</ul>
-<form method="POST">
-  <textarea
-    name="note"
-    id="note"
-    class="form-control"
-    aria-label="Write a note"
-  ></textarea>
-  <br />
-  <div class="text-center">
-    <button type="submit" class="btn btn-primary">
-      <i class="fa fa-plus" aria-hidden="true"></i>
-      Add Note
-    </button>
-  </div>
-</form>
 {% endblock %}

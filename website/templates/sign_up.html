@@ -1,7 +1,11 @@
-{% extends "base.html" %} {% block title %}Sign Up{% endblock %} {% block
-content %}
-<form method="POST">
-  <h3 align="center">Sign Up</h3>
+{% extends "base.html" %}
+{% block title %}Create account | Harvey Market{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <p class="eyebrow">MAKE YOURSELF AT HOME</p>
+  <h1>Create your account</h1>
+  <p class="auth-description">Save your notes and make this little market your own.</p>
+  <form method="POST" class="auth-form">
   <div class="form-group">
     <label for="email">Email Address</label>
     <input
@@ -43,6 +47,8 @@ content %}
     />
   </div>
   <br />
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+  <button type="submit" class="auth-submit">Create account</button>
+  </form>
+  <p class="auth-switch">Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+</section>
 {% endblock %}

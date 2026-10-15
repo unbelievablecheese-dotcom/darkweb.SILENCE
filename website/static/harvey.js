@@ -33,13 +33,9 @@
     const englishVoices = voices.filter((voice) =>
       voice.lang.toLowerCase().startsWith("en")
     );
-    const britishVoice = englishVoices
-      .filter((voice) => voice.lang.toLowerCase().startsWith("en-gb"))
-      .sort((first, second) => {
-        const preferredNames = /\b(daniel|james|ryan|arthur|male)\b/i;
-        return Number(preferredNames.test(second.name)) -
-          Number(preferredNames.test(first.name));
-      })[0];
+    const britishVoice = englishVoices.find((voice) =>
+      voice.lang.toLowerCase().startsWith("en-gb")
+    );
 
     return britishVoice || englishVoices[0] || voices[0] || null;
   }
@@ -64,8 +60,8 @@
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(message);
     utterance.lang = "en-GB";
-    utterance.rate = 0.92;
-    utterance.pitch = 0.88;
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
     const assistantVoice = getAssistantVoice();
     if (assistantVoice) {
       utterance.voice = assistantVoice;
@@ -89,10 +85,23 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message }),
       });
-      if (!response.headers.get("Content-Type")?.includes("application/json")) {
-        throw new Error("Your session may have expired. Sign in again and retry.");
+      const contentType = response.headers.get("Content-Type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("I couldn’t read the server response. Please try again.");
       }
       const result = await response.json();
+
+      if (response.status === 401 && result.loginUrl) {
+        appendMessage(result.error || "Your session has expired.", "assistant");
+        const signInLink = document.createElement("a");
+        signInLink.href = result.loginUrl;
+        signInLink.className = "harvey-sign-in";
+        signInLink.textContent = "Sign in again";
+        messages.appendChild(signInLink);
+        messages.scrollTop = messages.scrollHeight;
+        setStatus("Sign in required");
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(result.error || "H.A.R.V.E.Y. could not get a response.");

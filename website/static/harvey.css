@@ -136,6 +136,24 @@
   background: #075b75;
 }
 
+.harvey-sign-in {
+  align-self: flex-start;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(113, 230, 255, 0.45);
+  border-radius: 0.55rem;
+  color: var(--harvey-cyan);
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.harvey-sign-in:hover,
+.harvey-sign-in:focus-visible {
+  background: rgba(113, 230, 255, 0.1);
+  color: #fff;
+  text-decoration: underline;
+}
+
 .harvey-tools {
   display: flex;
   gap: 0.5rem;

@@ -1,4 +1,3 @@
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
 import os
 
 from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, url_for
@@ -11,6 +10,105 @@ from . import db
 from .models import Note
 
 views = Blueprint('views', __name__)
+
+PRODUCTS = [
+    {
+        "id": "desk-lamp",
+        "name": "Arc LED Desk Lamp",
+        "category": "Home",
+        "price": 34.99,
+        "rating": 4.8,
+        "reviews": 128,
+        "icon": "💡",
+        "color": "gold",
+        "description": "Warm, adjustable light for focused evenings.",
+        "badge": "Bestseller",
+    },
+    {
+        "id": "wireless-headphones",
+        "name": "Studio Wireless Headphones",
+        "category": "Electronics",
+        "price": 79.00,
+        "rating": 4.7,
+        "reviews": 86,
+        "icon": "🎧",
+        "color": "blue",
+        "description": "Comfortable sound for work, play, and travel.",
+        "badge": "Popular pick",
+    },
+    {
+        "id": "everyday-bottle",
+        "name": "Insulated Everyday Bottle",
+        "category": "Outdoors",
+        "price": 22.50,
+        "rating": 4.6,
+        "reviews": 214,
+        "icon": "🧴",
+        "color": "mint",
+        "description": "A sturdy, reusable companion for busy days.",
+        "badge": "",
+    },
+    {
+        "id": "canvas-tote",
+        "name": "Market Canvas Tote",
+        "category": "Fashion",
+        "price": 18.00,
+        "rating": 4.5,
+        "reviews": 63,
+        "icon": "👜",
+        "color": "rose",
+        "description": "A roomy carry-all made for everyday errands.",
+        "badge": "",
+    },
+    {
+        "id": "desk-organizer",
+        "name": "Bamboo Desk Organizer",
+        "category": "Home",
+        "price": 27.95,
+        "rating": 4.8,
+        "reviews": 91,
+        "icon": "🗂️",
+        "color": "sand",
+        "description": "Keep your workspace tidy and essentials close.",
+        "badge": "Staff pick",
+    },
+    {
+        "id": "plant-kit",
+        "name": "Little Windowsill Garden Kit",
+        "category": "Outdoors",
+        "price": 24.00,
+        "rating": 4.4,
+        "reviews": 47,
+        "icon": "🪴",
+        "color": "mint",
+        "description": "An easy-start kit for a greener corner at home.",
+        "badge": "",
+    },
+    {
+        "id": "notebook-set",
+        "name": "Everyday Notebook Set",
+        "category": "Stationery",
+        "price": 14.25,
+        "rating": 4.9,
+        "reviews": 173,
+        "icon": "📓",
+        "color": "lilac",
+        "description": "Three smooth-paper notebooks for plans and ideas.",
+        "badge": "Top rated",
+    },
+    {
+        "id": "wireless-charger",
+        "name": "Compact Wireless Charger",
+        "category": "Electronics",
+        "price": 29.99,
+        "rating": 4.3,
+        "reviews": 58,
+        "icon": "🔋",
+        "color": "blue",
+        "description": "A clean, cable-light spot for compatible devices.",
+        "badge": "",
+    },
+]
 
 
 @views.route('/', methods=['GET', 'POST'])
@@ -30,7 +128,12 @@ def home():
             flash('Note added!', category='success')
             return redirect(url_for('views.home'))
 
-    return render_template('home.html', user=current_user)
+    return render_template(
+        'home.html',
+        user=current_user,
+        products=PRODUCTS,
+        categories=sorted({product["category"] for product in PRODUCTS}),
+    )
 
 
 @views.route('/delete-note', methods=['POST'])

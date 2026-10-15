@@ -1,7 +1,11 @@
-{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
-%}
-<form method="POST">
-  <h3 align="center">Login</h3>
+{% extends "base.html" %}
+{% block title %}Sign in | Harvey Market{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <p class="eyebrow">WELCOME BACK</p>
+  <h1>Sign in to Harvey Market</h1>
+  <p class="auth-description">Access your saved notes and personal demo basket.</p>
+  <form method="POST" class="auth-form">
   <div class="form-group">
     <label for="email">Email Address</label>
     <input
@@ -23,6 +27,8 @@
     />
   </div>
   <br />
-  <button type="submit" class="btn btn-primary">Login</button>
-</form>
+  <button type="submit" class="auth-submit">Sign in</button>
+  </form>
+  <p class="auth-switch">New here? <a href="{{ url_for('auth.sign_up') }}">Create an account</a></p>
+</section>
 {% endblock %}
